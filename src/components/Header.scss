@@ -1,0 +1,136 @@
+@import "common/styles/_base.scss";
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  border-bottom: 2px solid transparent;
+  background-color: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+
+  &.sticky {
+    background-color: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid $color-stroke;
+
+    .wrapper {
+      padding: 12px 0;
+    }
+  }
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 32px 0;
+    box-sizing: border-box;
+    max-width: $page-width-limit;
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+
+    .logo {
+      transition: opacity 0.4s ease;
+      letter-spacing: -0.28px;
+      font-weight: $type-bold;
+      text-transform: uppercase;
+
+      span {
+        margin-left: 4px;
+        opacity: 0.4;
+      }
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: center;
+
+      .item {
+        font-size: 14px;
+        margin-right: 16px;
+        transition: all 0.2s ease;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:hover {
+          color: $color-primary;
+        }
+      }
+
+      .button {
+        &.desktop {
+          display: inline-block;
+        }
+        &.mobile {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    &.sticky {
+      .wrapper {
+        padding: 16px 0e;
+
+        .navigation {
+          .item {
+            color: $color-foreground;
+          }
+        }
+      }
+    }
+
+    .wrapper {
+      grid-template-columns: auto auto;
+      padding: 16px 0;
+      max-width: unset;
+
+      .logo {
+        height: 18px;
+        transform: translateY(-2px);
+      }
+
+      .navigation {
+        display: none;
+        .item {
+          font-size: 14px;
+          line-height: 140%;
+          margin-right: 16px;
+          color: $color-foreground;
+          vertical-align: middle;
+        }
+
+        .cta {
+          &.desktop {
+            display: none;
+          }
+          &.mobile {
+            vertical-align: middle;
+            display: inline-block;
+            font-size: 13px;
+            letter-spacing: 0;
+            padding: 8px 12px;
+
+            .label {
+              & > div {
+                svg {
+                  width: 16px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

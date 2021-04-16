@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import 'antd/dist/antd.css'
+import Site from './Site';
 import reportWebVitals from './reportWebVitals';
+import './assets/fonts/Manrope-Regular.ttf';
+import './assets/fonts/Manrope-Medium.ttf';
+import './assets/fonts/Manrope-ExtraBold.ttf';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Site />
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,0 +1,15 @@
+@import "common/styles/_base.scss";
+
+.footer {
+  padding-top: 0px;
+
+  .wrapper {
+    margin: 0 auto;
+    max-width: $page-width-limit;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 1200px) {
+  }
+}

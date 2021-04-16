@@ -1,0 +1,130 @@
+/* Colors */
+$color-foreground: #1f2145;
+$color-background: #ffffff;
+$color-surface: #f6f8f9;
+$color-stroke: #e5e7eb;
+$color-primary: #405ab9;
+
+/* Typography */
+$type-font: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+  "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  sans-serif;
+
+$type-regular: 400;
+$type-medium: 500;
+$type-bold: 800;
+
+/* Layout */
+$page-horizontal-padding: 40px;
+$page-horizontal-padding-mobile: 24px;
+$page-width-limit: 1024px;
+
+body {
+  margin: 0;
+  background-color: $color-background;
+  color: $color-foreground;
+  font-family: $type-font;
+  font-size: 14px;
+  line-height: 144%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  a {
+    color: $color-foreground;
+    text-decoration: none;
+    outline-color: $color-primary;
+
+    &.cta {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: $type-bold;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      font-family: $type-font;
+      border: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.primary {
+        background-color: $color-primary;
+        color: $color-background;
+      }
+
+      &.desktop {
+        display: inline-block;
+      }
+
+      &.mobile {
+        display: none;
+      }
+
+      &:hover {
+        opacity: 0.6;
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font-family: $type-font;
+    font-size: 48px;
+    line-height: 112%;
+    letter-spacing: -0.96px;
+    font-weight: $type-bold;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: $type-font;
+    font-size: 32px;
+    line-height: 144%;
+    letter-spacing: -0.64px;
+    font-weight: $type-bold;
+  }
+
+  h3 {
+    margin: 0;
+    font-family: $type-font;
+    font-size: 22px;
+    letter-spacing: -0.44px;
+    font-weight: $type-bold;
+  }
+
+  a,
+  input,
+  button {
+    outline-color: $color-primary;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .highlight {
+    color: $color-primary;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 13px;
+    h1,
+    h2 {
+      font-size: 32px;
+      line-height: 112%;
+    }
+
+    h3 {
+      font-size: 22px;
+      line-height: 112%;
+    }
+  }
+}
+
+::selection {
+  color: $color-background;
+  background: $color-primary;
+}
