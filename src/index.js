@@ -9,7 +9,7 @@ import "./assets/fonts/Manrope-Regular.ttf"
 import "./assets/fonts/Manrope-Medium.ttf"
 import "./assets/fonts/Manrope-ExtraBold.ttf"
 // Firebase
-import "./firebase.js"
+import "constant/firebase.js"
 
 ReactDOM.render(
   <React.StrictMode>
