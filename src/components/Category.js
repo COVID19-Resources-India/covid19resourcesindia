@@ -10,7 +10,7 @@ import { SPREADSHEET_KEY } from "constant/static"
 // context
 import { StateContext } from "context/StateContext"
 
-const columns = [
+const COLUMNS = [
   {
     title: "State",
     dataIndex: "State",
@@ -63,6 +63,12 @@ const Category = () => {
   if (error) {
     return <p>An error occurred</p>
   }
+
+  // Update columns
+  // -> Show state column if no state is selected
+  const columns = !selectedState
+    ? COLUMNS
+    : COLUMNS.filter((x) => x.key !== "State")
 
   return (
     <div>

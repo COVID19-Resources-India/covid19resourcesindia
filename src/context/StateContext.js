@@ -20,7 +20,6 @@ const GeoLocation = geolocated({
       fetch(
         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`
       ).then((response) => {
-        console.log("response")
         if (response) {
           response.json().then((location) => {
             if (
