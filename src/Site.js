@@ -12,6 +12,7 @@ function Site() {
         <Header />
         <Switch>
           <Route path="/" component={Home} exact />
+          <Route path="/search" component={Home} />
           {/* <Route path="/contribute" component={Contribute} /> */}
         </Switch>
         <Footer />

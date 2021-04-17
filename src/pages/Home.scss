@@ -47,6 +47,12 @@
             color: $color-background;
           }
         }
+        a.is-active {
+          .ant-tag {
+            background-color: $color-primary;
+            color: $color-background;
+          }
+        }
       }
     }
 
