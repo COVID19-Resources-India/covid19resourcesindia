@@ -24,7 +24,6 @@ const GeoLocation = geolocated({
           response.json().then((location) => {
             const currentState = location?.principalSubdivision
             if (currentState && states.includes(currentState)) {
-              localStorage.setItem("state", currentState)
               setSelectedState(currentState)
             }
           })
@@ -40,12 +39,20 @@ const GeoLocation = geolocated({
 export default function StateContextWrapper({ children }) {
   const persistedState = localStorage.getItem("state")
   const [selectedState, setSelectedState] = useState(persistedState)
-  const contextValues = { selectedState, setSelectedState }
+  const contextValues = {
+    selectedState,
+    setSelectedState: (v) => {
+      localStorage.setItem("state", v)
+      setSelectedState(v)
+    },
+  }
 
   // TODO: Add location based on the browser location as the default state - if possible
   return (
     <StateContext.Provider value={contextValues}>
-      {!persistedState && <GeoLocation setSelectedState={setSelectedState} />}
+      {!persistedState && (
+        <GeoLocation setSelectedState={contextValues.setSelectedState} />
+      )}
       {children}
     </StateContext.Provider>
   )
