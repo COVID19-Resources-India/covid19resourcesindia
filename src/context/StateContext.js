@@ -22,12 +22,10 @@ const GeoLocation = geolocated({
       ).then((response) => {
         if (response) {
           response.json().then((location) => {
-            if (
-              location &&
-              location.principalSubdivision &&
-              states.includes(location.principalSubdivision)
-            ) {
-              setSelectedState(location.principalSubdivision)
+            const currentState = location?.principalSubdivision
+            if (currentState && states.includes(currentState)) {
+              localStorage.setItem("state", currentState)
+              setSelectedState(currentState)
             }
           })
         }
@@ -40,11 +38,14 @@ const GeoLocation = geolocated({
 
 // Permission Provider
 export default function StateContextWrapper({ children }) {
-  const [selectedState, setSelectedState] = useState(undefined)
+  const persistedState = localStorage.getItem("state")
+  const [selectedState, setSelectedState] = useState(persistedState)
+  const contextValues = { selectedState, setSelectedState }
+
   // TODO: Add location based on the browser location as the default state - if possible
   return (
-    <StateContext.Provider value={{ selectedState, setSelectedState }}>
-      <GeoLocation setSelectedState={setSelectedState} />
+    <StateContext.Provider value={contextValues}>
+      {!persistedState && <GeoLocation setSelectedState={setSelectedState} />}
       {children}
     </StateContext.Provider>
   )
