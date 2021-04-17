@@ -29,6 +29,7 @@ export default function Home() {
           <div className="tags">
             {TAGS.map((i) => (
               <NavLink
+                key={i}
                 activeClassName="is-active"
                 to={`/search/${toKebabCase(i)}`}
               >
