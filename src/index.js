@@ -4,16 +4,20 @@ import "./index.css"
 import "antd/dist/antd.css"
 import Site from "./Site"
 // import reportWebVitals from "./reportWebVitals"
-// Fonts
+// fonts
 import "./assets/fonts/Manrope-Regular.ttf"
 import "./assets/fonts/Manrope-Medium.ttf"
 import "./assets/fonts/Manrope-ExtraBold.ttf"
-// Firebase
+// firebase
 import "constant/firebase.js"
+// context
+import StateContextWrapper from "context/StateContext"
 
 ReactDOM.render(
   <React.StrictMode>
-    <Site />
+    <StateContextWrapper>
+      <Site />
+    </StateContextWrapper>
   </React.StrictMode>,
   document.getElementById("root")
 )

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Link, NavLink } from "react-router-dom"
 import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
 import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
+import StateSelector from "components/StateSelector"
 import _ from "lodash"
 
 import "./Header.scss"
@@ -26,6 +27,7 @@ export default function Header() {
         <Link to="/" className="logo">
           COVID-19 Health Resources<span>India</span>
         </Link>
+        <StateSelector />
         <nav className="navigation">
           <NavLink to="/contribute" className="item">
             Submit Information
