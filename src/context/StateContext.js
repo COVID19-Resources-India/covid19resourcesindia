@@ -2,8 +2,6 @@ import { createContext, useEffect, useState } from "react"
 import { geolocated } from "react-geolocated"
 // constant
 import { states } from "constant/states"
-// components
-import Loader from "components/Loader"
 
 export const StateContext = createContext()
 
@@ -92,7 +90,7 @@ export default function StateContextWrapper({ children }) {
           setLoadingState={setLoadingState}
         />
       )}
-      {loadingState ? <Loader /> : children}
+      {children}
     </StateContext.Provider>
   )
 }
