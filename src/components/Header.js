@@ -33,10 +33,20 @@ export default function Header() {
           <NavLink to="/issue" className="item">
             Report an Issue
           </NavLink>
-          <a href="https://t.me/covid19resourcesindia" className="item" target="_blank" rel="noreferrer">
+          <a
+            href="https://t.me/covid19resourcesindia"
+            className="item"
+            target="_blank"
+            rel="noreferrer"
+          >
             <TelegramIcon />
           </a>
-          <a href="https://github.com/covid19resourcesindia" className="item" target="_blank" rel="noreferrer">
+          <a
+            href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
+            className="item"
+            target="_blank"
+            rel="noreferrer"
+          >
             <GithubIcon />
           </a>
         </nav>

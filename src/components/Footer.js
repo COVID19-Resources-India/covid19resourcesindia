@@ -1,6 +1,6 @@
-import React from "react";
+import React from "react"
 
-import "./Footer.scss";
+import "./Footer.scss"
 
 export default function Header() {
   return (
@@ -9,5 +9,5 @@ export default function Header() {
         <span>A crowdsourced initiative.</span>
       </div>
     </footer>
-  );
+  )
 }
