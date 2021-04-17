@@ -1,3 +1,5 @@
+// hooks
+import { useContext } from "react"
 import { useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
 // antd
@@ -5,8 +7,10 @@ import { Table } from "antd"
 // constants
 import { db } from "constant/firebase"
 import { SPREADSHEET_KEY } from "constant/static"
+// context
+import { StateContext } from "context/StateContext"
 
-const columns = [
+const COLUMNS = [
   {
     title: "State",
     dataIndex: "State",
@@ -37,9 +41,19 @@ const columns = [
 // Fetches data for the category and displays in the antd table
 const Category = () => {
   let { category } = useParams()
-  const [snapshots, loading, error] = useList(
-    db.ref(`${SPREADSHEET_KEY}/${category}`)
-  )
+  const { selectedState } = useContext(StateContext)
+
+  // fetch all by default
+  let refToUse = db.ref(`${SPREADSHEET_KEY}/${category}`)
+  // if state is selected in the context (from the header)
+  // filter based on state
+  if (selectedState) {
+    refToUse = db
+      .ref(`${SPREADSHEET_KEY}/${category}`)
+      .orderByChild("State")
+      .equalTo(selectedState)
+  }
+  const [snapshots, loading, error] = useList(refToUse)
   const dataSource = snapshots.map((i) => i.val())
 
   // TOOD: Show a loading spinner
@@ -49,6 +63,12 @@ const Category = () => {
   if (error) {
     return <p>An error occurred</p>
   }
+
+  // Update columns
+  // -> Show state column if no state is selected
+  const columns = !selectedState
+    ? COLUMNS
+    : COLUMNS.filter((x) => x.key !== "State")
 
   return (
     <div>
