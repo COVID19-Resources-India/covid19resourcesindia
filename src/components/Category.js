@@ -9,6 +9,8 @@ import { db } from "constant/firebase"
 import { SPREADSHEET_KEY } from "constant/static"
 // context
 import { StateContext } from "context/StateContext"
+// components
+import Loader from "components/Loader"
 
 const COLUMNS = [
   {
@@ -38,10 +40,9 @@ const COLUMNS = [
   },
 ]
 
-// Fetches data for the category and displays in the antd table
-const Category = () => {
+const CategoryComponent = ({ stateContext }) => {
   let { category } = useParams()
-  const { selectedState } = useContext(StateContext)
+  const { selectedState } = stateContext
 
   // fetch all by default
   let refToUse = db.ref(`${SPREADSHEET_KEY}/${category}`)
@@ -75,6 +76,19 @@ const Category = () => {
       <Table columns={columns} dataSource={dataSource} />
     </div>
   )
+}
+
+// Fetches data for the category and displays in the antd table
+const Category = () => {
+  const stateContext = useContext(StateContext)
+  const { loadingState } = stateContext
+
+  // Loading when state being fetched from geolocation
+  if (loadingState) {
+    return <Loader />
+  } else {
+    return <CategoryComponent stateContext={stateContext} />
+  }
 }
 
 export default Category
