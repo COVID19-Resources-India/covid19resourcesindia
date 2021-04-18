@@ -8,7 +8,7 @@ import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 import Category from "components/Category"
 import EmergencyInfo from "components/EmergencyInfo"
 // constants
-import { TAGS } from "constant/static"
+import { CATEGORIES } from "constant/static"
 // helper
 import { toKebabCase } from "utils/caseHelper"
 // styles
@@ -27,7 +27,7 @@ export default function Home() {
             suffix={<SearchIcon />}
           />
           <div className="tags">
-            {TAGS.map((i) => (
+            {CATEGORIES.map((i) => (
               <NavLink
                 key={i}
                 activeClassName="is-active"

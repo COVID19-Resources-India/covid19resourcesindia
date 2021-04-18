@@ -1,109 +1,180 @@
+// hooks
+import { useContext } from "react"
+import { useList } from "react-firebase-hooks/database"
+// icons
 import { ReactComponent as PDFIcon } from "assets/icons/pdf.svg"
+// constant
+import { db } from "constant/firebase"
+import { SPREADSHEET_KEY } from "constant/static"
+// components
+import Loader from "components/Loader"
+// context
+import { StateContext } from "context/StateContext"
 
-const EmergencyInfo = () => (
-  <section className="content">
-    <div className="resources-wrapper">
-      <div className="emergency-resources resource">
-        <h3>Emergency Resources</h3>
-        <div className="resources-block">
-          <div className="label">24/7 Helpline:</div>
-          <div className="content">
-            <a href="tel:+911123978046">+91-11-23978046</a>
-            <a href="tel:1075">1075 (Toll Free)</a>
-          </div>
-        </div>
-        <div className="resources-block">
-          <div className="label">WhatsApp Helpdesk (Live Chat)</div>
-          <div className="content">
-            <a href="https://wa.me/919013151515">https://wa.me/919013151515</a>
-          </div>
-        </div>
-        <div className="resources-block">
-          <div className="label">Facebook Helpdesk: (Messenger Chat)</div>
-          <div className="content">
-            <a
-              href="https://www.messenger.com/t/MyGovIndia"
-              target="_blank"
-              rel="noreferrer"
-            >
-              https://www.messenger.com/t/MyGovIndia
-            </a>
-          </div>
-        </div>
-        <div className="resources-block">
-          <div className="label">Local Helplines:</div>
-          <div className="content">
-            <a
-              href="https://www.mohfw.gov.in/pdf/coronvavirushelplinenumber.pdf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              States &amp; Union Territories Local Helplines
-            </a>
-          </div>
-        </div>
-      </div>
-      <div className="latest-updates resource">
-        <h3>Latest Updates</h3>
-        <div className="content">
-          <a
-            className="item"
-            href="https://static.mygov.in/rest/s3fs-public/mygov_161848046251307401.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <PDFIcon />
-            <span>Decision on CBSE Board Exams</span>
-          </a>
-          <a
-            className="item"
-            href="https://im.rediff.com/news/2021/apr/13break-the-chain.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <PDFIcon />
-            <span>Maharashtra: Break the Chain (14 Apr) - Official Order</span>
-          </a>
-        </div>
-      </div>
-      <div className="documents resource">
-        <h3>Helpful Guidelines &amp; Official Documents</h3>
-        <div className="content">
-          <a
-            className="item"
-            href="https://www.mohfw.gov.in/pdf/Algorithmforinternationalarrivals.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <PDFIcon />
-            <span>
-              Algorithm: Standard Operating Procedure for International Arrivals
-            </span>
-          </a>
-          <a
-            className="item"
-            href="https://www.mohfw.gov.in/pdf/Guidelinesforinternationalarrivals17022021.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <PDFIcon />
-            <span>Guidelines for International Arrivals</span>
-          </a>
-          <a
-            className="item"
-            href="https://www.mohfw.gov.in/pdf/FAQCoWINforcitizens.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <PDFIcon />
-            <span>
-              Frequently Asked Questions on Co-WIN (COVID-19 Vaccination)
-            </span>
-          </a>
-        </div>
+const titles = [
+  "24/7 Helpline",
+  "Facebook Helpdesk (Messenger Chat)",
+  "WhatsApp Helpdesk (Live Chat)",
+  "Local Help",
+  "Local Helplines",
+]
+
+const ResourceBlock = ({ title, resource }) => {
+  return (
+    <div className="resources-block">
+      <div className="label">{title}:</div>
+      <div className="content">
+        {resource &&
+          resource.length > 0 &&
+          resource.map((res, idx) => {
+            if (!res.Value) return null
+            if (res.Link)
+              return (
+                <a key={idx} href={res.Link} rel="noreferrer" target="_blank">
+                  {res.Value}
+                </a>
+              )
+            return <span key={idx}>{res.Value}</span>
+          })}
       </div>
     </div>
-  </section>
+  )
+}
+
+const LatestUpdates = () => {
+  return (
+    <div className="latest-updates resource">
+      <h3>Latest Updates</h3>
+      <div className="content">
+        <a
+          className="item"
+          href="https://static.mygov.in/rest/s3fs-public/mygov_161848046251307401.pdf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <PDFIcon />
+          <span>Decision on CBSE Board Exams</span>
+        </a>
+        <a
+          className="item"
+          href="https://im.rediff.com/news/2021/apr/13break-the-chain.pdf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <PDFIcon />
+          <span>Maharashtra: Break the Chain (14 Apr) - Official Order</span>
+        </a>
+      </div>
+    </div>
+  )
+}
+
+const Documents = () => (
+  <div className="documents resource">
+    <h3>Helpful Guidelines &amp; Official Documents</h3>
+    <div className="content">
+      <a
+        className="item"
+        href="https://www.mohfw.gov.in/pdf/Algorithmforinternationalarrivals.pdf"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <PDFIcon />
+        <span>
+          Algorithm: Standard Operating Procedure for International Arrivals
+        </span>
+      </a>
+      <a
+        className="item"
+        href="https://www.mohfw.gov.in/pdf/Guidelinesforinternationalarrivals17022021.pdf"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <PDFIcon />
+        <span>Guidelines for International Arrivals</span>
+      </a>
+      <a
+        className="item"
+        href="https://www.mohfw.gov.in/pdf/FAQCoWINforcitizens.pdf"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <PDFIcon />
+        <span>Frequently Asked Questions on Co-WIN (COVID-19 Vaccination)</span>
+      </a>
+    </div>
+  </div>
 )
+
+// Fetches from resources filters on state which it accepts as a prop
+const EmergencyResources = ({ heading, filterBy }) => {
+  const [snapshots, loading, error] = useList(
+    db
+      .ref(`${SPREADSHEET_KEY}/resources`)
+      .orderByChild("State")
+      .equalTo(filterBy)
+  )
+  const dataSource = snapshots.map((i) => i.val())
+
+  // Create object of arrays from titles
+  // {"24/7 Helpline": [Resource, Resource],
+  //  "Local Helpline": [Resource]
+  // }
+  const titleObj = {}
+  if (dataSource) {
+    for (const i of dataSource) {
+      if (titleObj[i.Title]) {
+        titleObj[i.Title] = [...titleObj[i.Title], i]
+      } else {
+        titleObj[i.Title] = [i]
+      }
+    }
+  }
+
+  if (loading) {
+    return <Loader />
+  }
+  if (error) {
+    return <p>An error occurred...</p>
+  }
+
+  if (dataSource.length > 0) {
+    return (
+      <div className="emergency-resources resource">
+        <h3>{heading}</h3>
+        {/* Looping through static titles so the order is maintained */}
+        {titles.map((title) => {
+          if (titleObj[title]) {
+            const resource = titleObj[title]
+            return (
+              <ResourceBlock key={title} title={title} resource={resource} />
+            )
+          }
+          return null
+        })}
+      </div>
+    )
+  }
+  return null
+}
+
+const EmergencyInfo = () => {
+  const { selectedState } = useContext(StateContext)
+  return (
+    <section className="content">
+      <div className="resources-wrapper">
+        <EmergencyResources heading="National Resources" filterBy="National" />
+        <LatestUpdates />
+        <Documents />
+        {selectedState && (
+          <EmergencyResources
+            heading={`Resources in ${selectedState}`}
+            filterBy={selectedState}
+          />
+        )}
+      </div>
+    </section>
+  )
+}
 
 export default EmergencyInfo
