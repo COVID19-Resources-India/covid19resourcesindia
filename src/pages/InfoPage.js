@@ -11,6 +11,7 @@ import { db } from "constant/firebase"
 // styles
 import "./InfoPage.scss"
 import { SPREADSHEET_KEY } from "constant/static"
+import { Content } from "antd/lib/layout/layout"
 
 const PAGE_LIST = {
   "mumbai-war-rooms": {
@@ -62,10 +63,10 @@ const InfoPageComponent = (props) => {
 
   // Displays a table by default
   return (
-    <>
-      {heading && <h3>{heading}</h3>}
-      <Table columns={columns} dataSource={dataSource} />
-    </>
+    <div className="page-content">
+      {heading && <h3 className="title">{heading}</h3>}
+      <Table columns={columns} dataSource={dataSource} className="query-results" />
+    </div>
   )
 }
 
