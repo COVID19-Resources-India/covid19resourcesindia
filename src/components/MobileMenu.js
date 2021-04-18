@@ -32,7 +32,7 @@ class MobileMenu extends React.Component {
   };
 
   render() {
-    const { placement, visible } = this.state;
+    const { visible } = this.state;
     return (
       <>
         <Button onClick={this.showDrawer} className="mobile-menu-button">
