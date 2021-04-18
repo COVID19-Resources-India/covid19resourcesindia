@@ -1,7 +1,7 @@
 @import "common/styles/_base.scss";
 
 .home {
-  padding-top: 144px;
+  padding-top: 160px;
 
   .wrapper {
     margin: 0 auto;
@@ -25,32 +25,37 @@
         margin-bottom: 24px;
 
         input {
-          background-color: $color-surface;
-          color: $color-foreground;
           font-size: 16px;
         }
       }
 
       .tags {
-        .ant-tag {
-          background-color: $color-surface;
-          color: $color-foreground;
-          border: 1px solid $color-stroke;
-          border-radius: 4px;
-          font-size: 14px;
-          line-height: auto;
-          padding: 6px 16px;
-          cursor: pointer;
+        .tag-item {
+          margin-right: 8px;
 
-          &:hover {
-            background-color: $color-primary;
-            color: $color-background;
+          &.is-active {
+            .ant-tag {
+              background-color: $color-primary;
+              color: $color-background;
+            }
           }
-        }
-        a.is-active {
+
           .ant-tag {
-            background-color: $color-primary;
-            color: $color-background;
+            background-color: $color-surface;
+            color: $color-foreground;
+            border: 1px solid $color-stroke;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: auto;
+            padding: 6px 16px;
+            margin-right: 0;
+            margin-bottom: 12px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $color-primary;
+              color: $color-background;
+            }
           }
         }
       }
@@ -62,13 +67,16 @@
       opacity: 0.4;
     }
 
-    .content {
+    .page-content {
       .resources-wrapper {
         display: grid;
         justify-content: space-between;
-        grid-template-areas:
-          "emergency updates"
-          "emergency documents";
+        row-gap: 40px;
+        // grid-template-areas:
+        //   "emergency emergency"
+        //   "updates documents";
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
 
         .resource {
           h3 {
@@ -82,7 +90,7 @@
               margin-bottom: 16px;
 
               &:hover {
-                color: $color-primary;
+                color: $color-secondary;
               }
 
               svg {
@@ -100,9 +108,6 @@
         }
 
         .emergency-resources {
-          // grid-area: emergency;
-          // TODO: Fix
-
           .resources-block {
             margin-bottom: 32px;
 
@@ -115,18 +120,13 @@
               a {
                 display: block;
                 font-size: 20px;
+                line-height: 27px;
                 font-weight: $type-bold;
                 letter-spacing: -0.4px;
-                color: $color-primary;
                 margin-bottom: 4px;
-                transition: opacity 0.2s ease;
 
                 &:last-child {
                   margin-bottom: 0;
-                }
-
-                &:hover {
-                  opacity: 0.6;
                 }
               }
             }
@@ -134,17 +134,38 @@
         }
 
         .latest-updates {
-          grid-area: updates;
         }
 
         .documents {
-          grid-area: documents;
         }
       }
     }
   }
 
-  @media screen and (max-width: 1200px) {
-    padding: 96px 24px;
+  @media screen and (max-width: 960px) {
+    padding: 120px 16px;
+
+    .wrapper {
+      .divider {
+        margin: 48px 0;
+      }
+
+      .page-content {
+        .resources-wrapper {
+          grid-template-columns: auto;
+          grid-template-rows: unset;
+          justify-content: center;
+          text-align: center;
+
+          .resource {
+            .content {
+              a {
+                word-break: break-word;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

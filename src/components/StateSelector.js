@@ -5,6 +5,7 @@ import { Select } from "antd"
 import { states } from "constant/states"
 // context
 import { StateContext } from "context/StateContext"
+import "./StateSelector.scss"
 
 const { Option } = Select
 
@@ -24,6 +25,7 @@ const StateSelector = () => {
       optionFilterProp="children"
       onChange={onChange}
       value={selectedState}
+      className="state-selector"
     >
       {states.map((i) => (
         <Option key={i} value={i}>

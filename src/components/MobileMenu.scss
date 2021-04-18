@@ -1,0 +1,91 @@
+@import "common/styles/_base.scss";
+
+.mobile-menu-drawer {
+  .mobile-menu-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .logo {
+      justify-self: center;
+      transition: opacity 0.4s ease;
+      letter-spacing: -0.28px;
+      font-weight: $type-bold;
+      text-transform: uppercase;
+      color: $color-foreground;
+      margin-top: 24px;
+      margin-bottom: 24px;
+
+      span {
+        margin-left: 4px;
+        opacity: 0.4;
+      }
+    }
+
+    .navigation {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+
+      .item {
+        font-size: 14px;
+        color: $color-foreground;
+        margin-bottom: 16px;
+        transition: all 0.2s ease;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .navigation-icons {
+      width: 100%;
+      background-color: $color-surface;
+      display: flex;
+      justify-content: center;
+      padding: 16px 0 10px;
+      .item {
+        margin-right: 16px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .ant-drawer-content-wrapper {
+    transform: translateY(64px);
+    padding: 0 16px;
+    width: 100%;
+
+    .ant-drawer-content {
+      border-radius: 8px;
+
+      .ant-drawer-wrapper-body {
+        .ant-drawer-close {
+          padding-top: 24px;
+        }
+
+        .ant-drawer-body {
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+.header {
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    border: 1px solid $color-stroke;
+
+    span {
+      margin-right: 4px;
+    }
+  }
+}

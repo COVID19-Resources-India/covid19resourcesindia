@@ -1,7 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
-import "antd/dist/antd.css"
 import Site from "./Site"
 // import reportWebVitals from "./reportWebVitals"
 // fonts
@@ -12,6 +11,9 @@ import "./assets/fonts/Manrope-ExtraBold.ttf"
 import "constant/firebase.js"
 // context
 import StateContextWrapper from "context/StateContext"
+//ant-d
+import "antd/dist/antd.css"
+import "common/styles/antd-overrides.scss";
 
 ReactDOM.render(
   <React.StrictMode>
