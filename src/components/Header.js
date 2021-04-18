@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Link, NavLink } from "react-router-dom"
 import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
 import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
+import MobileMenu from "components/MobileMenu"
 import StateSelector from "components/StateSelector"
 import _ from "lodash"
 
@@ -24,13 +25,13 @@ export default function Header() {
   return (
     <header id="header" className={`header ${isSticky ? "sticky" : ""}`}>
       <div className="wrapper">
-        <Link to="/" className="logo">
-          COVID-19 Health Resources<span>India</span>
-        </Link>
         <StateSelector />
+        <Link to="/" className="logo">
+          COVID-19 Resources<span>India</span>
+        </Link>
         <nav className="navigation">
           <NavLink to="/contribute" className="item">
-            Submit Information
+            Contribute
           </NavLink>
           <NavLink to="/issue" className="item">
             Report an Issue
@@ -52,6 +53,7 @@ export default function Header() {
             <GithubIcon />
           </a>
         </nav>
+        <MobileMenu />
       </div>
     </header>
   )

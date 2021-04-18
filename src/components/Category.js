@@ -73,8 +73,8 @@ const CategoryComponent = ({ category, stateContext }) => {
     : COLUMNS.filter((x) => x.key !== "State")
 
   return (
-    <div>
-      <Table columns={columns} dataSource={dataSource} />
+    <div className="query-result">
+      <Table columns={columns} dataSource={dataSource} tableLayout="fixed" />
     </div>
   )
 }
