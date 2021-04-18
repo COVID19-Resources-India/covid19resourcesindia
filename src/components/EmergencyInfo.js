@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 // hooks
 import { useContext } from "react"
 import { useList } from "react-firebase-hooks/database"
@@ -28,6 +29,13 @@ const ResourceBlock = ({ title, resource }) => {
           resource.length > 0 &&
           resource.map((res, idx) => {
             if (!res.Value) return null
+            if (res.InternalLink) {
+              return (
+                <Link key={idx} to={`info/${res.InternalLink}`}>
+                  {res.Value}
+                </Link>
+              )
+            }
             if (res.Link)
               return (
                 <a key={idx} href={res.Link} rel="noreferrer" target="_blank">

@@ -29,4 +29,17 @@ const states = [
   "West Bengal",
 ]
 
-export { states }
+const unionTerritories = [
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman & Diu",
+  "Delhi",
+  "Jammu & Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry",
+]
+
+const all = [...states, ...unionTerritories]
+
+export { all as states }
