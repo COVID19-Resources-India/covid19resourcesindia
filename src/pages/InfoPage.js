@@ -11,7 +11,6 @@ import { db } from "constant/firebase"
 // styles
 import "./InfoPage.scss"
 import { SPREADSHEET_KEY } from "constant/static"
-import { Content } from "antd/lib/layout/layout"
 
 const PAGE_LIST = {
   "mumbai-war-rooms": {
