@@ -161,17 +161,17 @@ const EmergencyResources = ({ heading, filterBy }) => {
 const EmergencyInfo = () => {
   const { selectedState } = useContext(StateContext)
   return (
-    <section className="content">
+    <section className="page-content">
       <div className="resources-wrapper">
         <EmergencyResources heading="National Resources" filterBy="National" />
-        <LatestUpdates />
-        <Documents />
         {selectedState && (
           <EmergencyResources
             heading={`Resources in ${selectedState}`}
             filterBy={selectedState}
           />
         )}
+        <Documents />
+        <LatestUpdates />
       </div>
     </section>
   )
