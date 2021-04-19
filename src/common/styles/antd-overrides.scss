@@ -17,3 +17,29 @@
     color: $color-foreground;
   }
 }
+
+.ant-table {
+  .ant-table-container {
+    .ant-table-content {
+      .ant-table-thead {
+        .ant-table-cell {
+          font-weight: $type-bold;
+          background-color: $color-surface;
+          border-bottom: 1px solid $color-stroke;
+
+          &.ant-table-cell-fix-right {
+            border-left: 1px solid $color-stroke;
+          }
+        }
+      }
+
+      .ant-table-tbody {
+        .ant-table-cell {
+          &.ant-table-cell-fix-right {
+            border-left: 1px solid $color-stroke;
+          }
+        }
+      }
+    }
+  }
+}

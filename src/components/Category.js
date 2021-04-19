@@ -3,7 +3,7 @@ import { useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
 // antd
-import { Result, Button, Table } from "antd"
+import { Result, Button, Table, Input } from "antd"
 // constants
 import { db } from "constant/firebase"
 import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
@@ -13,6 +13,12 @@ import { StateContext } from "context/StateContext"
 import { toTitleCase } from "utils/caseHelper"
 // components
 import Loader from "components/Loader"
+// icons
+import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
+import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
+import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
+// styles
+import "./Category.scss"
 
 const COLUMNS = [
   {
@@ -26,11 +32,6 @@ const COLUMNS = [
     key: "Distributor Name",
   },
   {
-    title: "E-Mail Address",
-    dataIndex: "E-Mail Address",
-    key: "E-Mail Address",
-  },
-  {
     title: "Telephone",
     dataIndex: "Telephone",
     key: "Telephone",
@@ -39,6 +40,18 @@ const COLUMNS = [
     title: "Address",
     dataIndex: "Address",
     key: "Address",
+  },
+  {
+    title: "E-Mail Address",
+    dataIndex: "E-Mail Address",
+    key: "E-Mail Address",
+  },
+  {
+    title: 'Working?',
+    key: 'action-feedback',
+    fixed: 'right',
+    width: 100,
+    render: () => (<div className="vote-wrapper"><Button className="vote-button" icon={<UpvoteIcon/>}>12</Button><Button className="vote-button" icon={<DownvoteIcon/>}>2</Button></div>),
   },
 ]
 
@@ -74,7 +87,17 @@ const CategoryComponent = ({ category, stateContext }) => {
 
   return (
     <div className="query-result">
-      <Table columns={columns} dataSource={dataSource} tableLayout="fixed" />
+      <Input
+        className="filter-box"
+        placeholder="Start typing here to filter results..."
+        suffix={<SearchIcon />}
+      />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        size="small"
+        pagination={{ defaultPageSize: 20, position: ["topCenter", "bottomCenter"] }}
+        />
     </div>
   )
 }
