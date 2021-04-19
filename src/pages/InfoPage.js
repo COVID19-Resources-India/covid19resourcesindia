@@ -34,6 +34,32 @@ const PAGE_LIST = {
       },
     ],
   },
+  "veer-foundation-mumbai": {
+    heading: "Veer Foundation (Mumbai)",
+    // customComponent: (p) => <WarRooms {...p} />,
+    columns: [
+      {
+        title: "Area",
+        dataIndex: "Area",
+        key: "Area",
+      },
+      {
+        title: "Volunteer Contact",
+        dataIndex: "Volunteer Contact",
+        key: "Volunteer Contact",
+      },
+      {
+        title: "Address",
+        dataIndex: "Address",
+        key: "Address",
+      },
+      {
+        title: "Sangh Contact",
+        dataIndex: "Sangh Contact",
+        key: "Sangh Contact",
+      },
+    ],
+  },
 }
 
 // Automatically fetches page param from spreadsheet
@@ -64,7 +90,11 @@ const InfoPageComponent = (props) => {
   return (
     <div className="page-content">
       {heading && <h3 className="title">{heading}</h3>}
-      <Table columns={columns} dataSource={dataSource} className="query-results" />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        className="query-results"
+      />
     </div>
   )
 }
