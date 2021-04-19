@@ -15,24 +15,26 @@
     }
   }
 
-  .vote-wrapper {
-    display: flex;
-
-    .vote-button {
-      padding: 0 2px;
-      margin-right: 8px;
+  .ant-table-wrapper {
+    .vote-wrapper {
       display: flex;
-      align-items: center;
-      border-radius: 4px;
-      border-color: transparent;
 
-      &:last-child {
-        margin-right: 0;
-      }
+      .vote-button {
+        padding: 0 2px;
+        margin-right: 8px;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        border-color: transparent;
 
-      &:focus-within {
-        border-color: $color-primary;
-        color: $color-foreground;
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:focus-within {
+          border-color: $color-primary;
+          color: $color-foreground;
+        }
       }
     }
   }
