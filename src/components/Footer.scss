@@ -2,6 +2,7 @@
 
 .footer {
   padding-top: 0px;
+  padding-bottom: 48px;
 
   .wrapper {
     margin: 0 auto;
@@ -11,5 +12,7 @@
   }
 
   @media screen and (max-width: 960px) {
+    padding-top: 0px;
+    padding-bottom: 48px;
   }
 }
