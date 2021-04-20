@@ -8,6 +8,8 @@ import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
 // constants
 import { db } from "constant/firebase"
 
+const VERIFICATION_COUNT_NODE = "verificationCounts"
+
 const verificationColumn = ({ upvote, downvote }) => ({
   title: "Working?",
   key: "action-feedback",
@@ -35,11 +37,11 @@ const verificationColumn = ({ upvote, downvote }) => ({
 
 const Verification = ({ category, children, selectedState }) => {
   // fetch all by default
-  let refToUse = db.ref(`verificationCounts/${category}`)
+  let refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}`)
   // if state is selected in the context (from the header)
   // filter based on state
   if (selectedState) {
-    refToUse = db.ref(`verificationCounts/${category}/${selectedState}`)
+    refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${selectedState}`)
   }
   const [snapshots] = useList(refToUse)
 
@@ -51,14 +53,24 @@ const Verification = ({ category, children, selectedState }) => {
   }
 
   const upvoteFn = (r) => {
-    console.log("upvote", category, selectedState, r.State, r.key)
+    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).update(
+      {
+        upvote: r.upvote ? r.upvote + 1 : 1,
+        downvote: r.downvote ?? 0,
+      }
+    )
   }
 
   const downvoteFn = (r) => {
-    console.log("downvote", category, selectedState, r.State, r.key)
+    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).update(
+      {
+        upvote: r.upvote ?? 0,
+        downvote: r.downvote ? r.downvote + 1 : 1,
+      }
+    )
   }
 
-  return <>{children({ verificationCounts, upvoteFn, downvoteFn })}</>
+  return <>{children({ downvoteFn, upvoteFn, verificationCounts })}</>
 }
 
 export default Verification
