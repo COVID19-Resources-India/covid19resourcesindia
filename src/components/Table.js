@@ -17,10 +17,14 @@ const CustomTable = ({
 }) => {
   const [snapshots, loading, error] = useList(refToUse)
   const [searchedValue, setSearchedValue] = useState("")
+  const [dataSource, setDataSource] = useState([])
   const [filteredData, setFilteredData] = useState([])
 
   useEffect(() => {
-    const dataSource = snapshots.map((i) => i.val())
+    setDataSource(snapshots.map((i) => i.val()))
+  }, [snapshots])
+
+  useEffect(() => {
     const newFilteredData = dataSource.filter((entry) => {
       // Creating new object as the key can be deleted only in new object otherwise it'll delete from reference
       const newEntry = { ...entry }
@@ -34,12 +38,9 @@ const CustomTable = ({
     })
     if (searchedValue) setFilteredData(newFilteredData)
     else setFilteredData(dataSource)
-  }, [snapshots, searchedValue])
+  }, [dataSource, searchedValue])
 
-  const onSearchChange = (e) => {
-    const currValue = e.target.value
-    setSearchedValue(currValue)
-  }
+  const onSearchChange = (e) => setSearchedValue(e.target.value)
 
   if (loading) {
     return <Loader />
