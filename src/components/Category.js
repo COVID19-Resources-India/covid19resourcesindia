@@ -1,5 +1,5 @@
 // hooks
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
 // antd
@@ -47,11 +47,20 @@ const COLUMNS = [
     key: "E-Mail Address",
   },
   {
-    title: 'Working?',
-    key: 'action-feedback',
-    fixed: 'right',
+    title: "Working?",
+    key: "action-feedback",
+    fixed: "right",
     width: 100,
-    render: () => (<div className="vote-wrapper"><Button className="vote-button" icon={<UpvoteIcon/>}>12</Button><Button className="vote-button" icon={<DownvoteIcon/>}>2</Button></div>),
+    render: () => (
+      <div className="vote-wrapper">
+        <Button className="vote-button" icon={<UpvoteIcon />}>
+          12
+        </Button>
+        <Button className="vote-button" icon={<DownvoteIcon />}>
+          2
+        </Button>
+      </div>
+    ),
   },
 ]
 
@@ -69,7 +78,22 @@ const CategoryComponent = ({ category, stateContext }) => {
       .equalTo(selectedState)
   }
   const [snapshots, loading, error] = useList(refToUse)
-  const dataSource = snapshots.map((i) => i.val())
+  const [searchedValue, setSearchedValue] = useState("")
+  const [filteredData, setFilteredData] = useState([])
+
+  useEffect(() => {
+    const dataSource = snapshots.map((i) => i.val())
+    const newFilteredData = dataSource.filter((entry) => {
+      delete entry.key // Removing key from search
+      const values = Object.values(entry)
+      return values.find((value = "") =>
+        // Looks like in some cases the data was having value as number
+        value.toString().toLowerCase().includes(searchedValue.toLowerCase())
+      )
+    })
+    if (searchedValue) setFilteredData(newFilteredData)
+    else setFilteredData(dataSource)
+  }, [snapshots, searchedValue])
 
   // TOOD: Show a loading spinner
   if (loading) {
@@ -85,19 +109,29 @@ const CategoryComponent = ({ category, stateContext }) => {
     ? COLUMNS
     : COLUMNS.filter((x) => x.key !== "State")
 
+  const onSearchChange = (e) => {
+    const currValue = e.target.value
+    setSearchedValue(currValue)
+  }
+
   return (
     <div className="query-result">
       <Input
         className="filter-box"
         placeholder="Start typing here to filter results..."
         suffix={<SearchIcon />}
+        onChange={onSearchChange}
+        value={searchedValue}
       />
       <Table
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         size="small"
-        pagination={{ defaultPageSize: 20, position: ["topCenter", "bottomCenter"] }}
-        />
+        pagination={{
+          defaultPageSize: 20,
+          position: ["topCenter", "bottomCenter"],
+        }}
+      />
     </div>
   )
 }
