@@ -1,9 +1,8 @@
 // hooks
-import { useContext, useEffect, useState } from "react"
+import { useContext} from "react"
 import { useHistory, useParams } from "react-router-dom"
-import { useList } from "react-firebase-hooks/database"
 // antd
-import { Result, Button, Table, Input } from "antd"
+import { Result, Button } from "antd"
 // constants
 import { db } from "constant/firebase"
 import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
@@ -13,12 +12,10 @@ import { StateContext } from "context/StateContext"
 import { toTitleCase } from "utils/caseHelper"
 // components
 import Loader from "components/Loader"
+import CustomTable from "components/Table"
 // icons
-import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
 import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
-// styles
-import "./Category.scss"
 
 const COLUMNS = [
   {
@@ -77,62 +74,17 @@ const CategoryComponent = ({ category, stateContext }) => {
       .orderByChild("State")
       .equalTo(selectedState)
   }
-  const [snapshots, loading, error] = useList(refToUse)
-  const [searchedValue, setSearchedValue] = useState("")
-  const [filteredData, setFilteredData] = useState([])
-
-  useEffect(() => {
-    const dataSource = snapshots.map((i) => i.val())
-    const newFilteredData = dataSource.filter((entry) => {
-      delete entry.key // Removing key from search
-      const values = Object.values(entry)
-      return values.find((value = "") =>
-        // Looks like in some cases the data was having value as number
-        value.toString().toLowerCase().includes(searchedValue.toLowerCase())
-      )
-    })
-    if (searchedValue) setFilteredData(newFilteredData)
-    else setFilteredData(dataSource)
-  }, [snapshots, searchedValue])
-
-  // TOOD: Show a loading spinner
-  if (loading) {
-    return <p>Loading ...</p>
-  }
-  if (error) {
-    return <p>An error occurred</p>
-  }
-
   // Update columns
   // -> Show state column if no state is selected
   const columns = !selectedState
     ? COLUMNS
     : COLUMNS.filter((x) => x.key !== "State")
 
-  const onSearchChange = (e) => {
-    const currValue = e.target.value
-    setSearchedValue(currValue)
-  }
-
   return (
-    <div className="query-result">
-      <Input
-        className="filter-box"
-        placeholder="Start typing here to filter results..."
-        suffix={<SearchIcon />}
-        onChange={onSearchChange}
-        value={searchedValue}
-      />
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        size="small"
-        pagination={{
-          defaultPageSize: 20,
-          position: ["topCenter", "bottomCenter"],
-        }}
-      />
-    </div>
+    <CustomTable
+      refToUse={refToUse}
+      columns={columns}
+    />
   )
 }
 
