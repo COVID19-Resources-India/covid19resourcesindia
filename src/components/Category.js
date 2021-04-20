@@ -11,12 +11,13 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 import { StateContext } from "context/StateContext"
 // helper
 import { toTitleCase } from "utils/caseHelper"
+import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
+import Verification from "components/Verification"
 // icons
 import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
-import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
-import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
+
 // styles
 import "./Category.scss"
 
@@ -45,13 +46,6 @@ const COLUMNS = [
     title: "E-Mail Address",
     dataIndex: "E-Mail Address",
     key: "E-Mail Address",
-  },
-  {
-    title: 'Working?',
-    key: 'action-feedback',
-    fixed: 'right',
-    width: 100,
-    render: () => (<div className="vote-wrapper"><Button className="vote-button" icon={<UpvoteIcon/>}>12</Button><Button className="vote-button" icon={<DownvoteIcon/>}>2</Button></div>),
   },
 ]
 
@@ -92,12 +86,35 @@ const CategoryComponent = ({ category, stateContext }) => {
         placeholder="Start typing here to filter results..."
         suffix={<SearchIcon />}
       />
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        size="small"
-        pagination={{ defaultPageSize: 20, position: ["topCenter", "bottomCenter"] }}
-        />
+      <Verification selectedState={selectedState} category={category}>
+        {(verificationProps) => {
+          const { downvoteFn, upvoteFn, verificationCounts } = verificationProps
+          // add verification counts in dataSource
+          const dataWithCounts = dataSource.map((i) => ({
+            ...i,
+            upvote: verificationCounts[i.key]?.upvote ?? 0,
+            downvote: verificationCounts[i.key]?.downvote ?? 0,
+          }))
+
+          return (
+            <Table
+              columns={[
+                ...columns,
+                verificationColumn({
+                  upvote: upvoteFn,
+                  downvote: downvoteFn,
+                }),
+              ]}
+              dataSource={dataWithCounts}
+              size="small"
+              pagination={{
+                defaultPageSize: 20,
+                position: ["topCenter", "bottomCenter"],
+              }}
+            />
+          )
+        }}
+      </Verification>
     </div>
   )
 }
@@ -110,6 +127,7 @@ const Category = () => {
   const stateContext = useContext(StateContext)
   const { loadingState } = stateContext
 
+  if (!loadingState && !category) return null
   // Only fetch category from firebase if it is in the approved list of CATEGORIES
   if (!CATEGORIES.includes(toTitleCase(category))) {
     return (
