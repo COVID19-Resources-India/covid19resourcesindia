@@ -47,14 +47,6 @@ export default function Header() {
             Contribute
           </a>
           <a
-            href="https://github.com/COVID19-Resources-India/covid19resourcesindia/issues"
-            target="_blank"
-            rel="noreferrer"
-            className="item"
-          >
-            Report an Issue
-          </a>
-          <a
             href="https://t.me/covid19resourcesindia"
             className="item"
             target="_blank"
