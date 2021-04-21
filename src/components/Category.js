@@ -10,7 +10,7 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 // context
 import { StateContext } from "context/StateContext"
 // helper
-import { toTitleCase } from "utils/caseHelper"
+import { toKebabCase, toTitleCase } from "utils/caseHelper"
 import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
@@ -94,7 +94,7 @@ const CategoryComponent = ({ category, stateContext }) => {
             let field = verificationCounts?.[i.key]
             // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
             if (!selectedState) {
-              field = verificationCounts?.[i.State]?.[i.key]
+              field = verificationCounts?.[toKebabCase(i.State)]?.[i.key]
             }
             return {
               ...i,

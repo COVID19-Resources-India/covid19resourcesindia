@@ -8,6 +8,7 @@ import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
 import { db } from "constant/firebase"
 // utils
 import cella from "utils/cella"
+import { toKebabCase } from "utils/caseHelper"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
 
@@ -49,7 +50,9 @@ const Verification = ({ category, children, selectedState }) => {
   // if state is selected in the context (from the header)
   // filter based on state
   if (selectedState) {
-    refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${selectedState}`)
+    refToUse = db.ref(
+      `${VERIFICATION_COUNT_NODE}/${category}/${toKebabCase(selectedState)}`
+    )
   }
   const [verificationCounts, setVerificationCounts] = useState(undefined)
 
@@ -67,7 +70,9 @@ const Verification = ({ category, children, selectedState }) => {
 
   // Update db and add to local verificationCounts
   const vote = ({ r, counts, type }) => {
-    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).set(
+    const state = toKebabCase(r.State)
+    console.log("r", r.State, state)
+    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`).set(
       counts
     )
 
@@ -75,8 +80,8 @@ const Verification = ({ category, children, selectedState }) => {
       if (!selectedState) {
         return {
           ...prev,
-          [r.State]: {
-            ...prev?.[r.State],
+          [state]: {
+            ...prev?.[state],
             [r.key]: counts,
           },
         }
