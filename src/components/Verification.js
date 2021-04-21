@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 // modules
 import ReactTimeAgo from "react-time-ago"
 // antd
@@ -84,17 +84,25 @@ const Verification = ({ category, children, selectedState }) => {
   }
   const [verificationCounts, setVerificationCounts] = useState(undefined)
 
+  const refetchCounts = useCallback(() => {
+    refToUse.once("value").then((s) => {
+      const counts = s.val()
+      setVerificationCounts(counts)
+    })
+  }, [refToUse])
   // Only fetch counts once instead of keeping a watcher
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
     if (verificationCounts === undefined) {
-      refToUse.once("value").then((s) => {
-        const counts = s.val()
-        setVerificationCounts(counts)
-      })
+      refetchCounts()
     }
-  }, [refToUse, verificationCounts])
+  }, [refetchCounts, verificationCounts])
+
+  useEffect(() => {
+    // if category or selected state changed, refetch counts
+    refetchCounts()
+  }, [category, refetchCounts, selectedState])
 
   // Update db and add to local verificationCounts
   const vote = ({ r, ref, counts, type }) => {
@@ -124,7 +132,7 @@ const Verification = ({ category, children, selectedState }) => {
       }
     })
 
-    // update local storage to note if user has already voted for an id
+    // update local storage to note if user has already voted for an idUgh.
     cella.store({
       key: "votes",
       value: {
