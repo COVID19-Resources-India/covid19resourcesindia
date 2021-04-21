@@ -92,8 +92,8 @@ const CategoryComponent = ({ category, stateContext }) => {
           // add verification counts in dataSource
           const dataWithCounts = dataSource.map((i) => ({
             ...i,
-            upvote: verificationCounts[i.key]?.upvote ?? 0,
-            downvote: verificationCounts[i.key]?.downvote ?? 0,
+            upvote: verificationCounts?.[i.key]?.upvote ?? 0,
+            downvote: verificationCounts?.[i.key]?.downvote ?? 0,
           }))
 
           return (

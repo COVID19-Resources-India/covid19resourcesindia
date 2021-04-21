@@ -1,5 +1,4 @@
-// firebase
-import { useList } from "react-firebase-hooks/database"
+import { useEffect, useState } from "react"
 // antd
 import { Button } from "antd"
 // icons
@@ -43,31 +42,28 @@ const Verification = ({ category, children, selectedState }) => {
   if (selectedState) {
     refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${selectedState}`)
   }
-  const [snapshots] = useList(refToUse)
-
-  const verificationCounts = {}
-  if (snapshots && snapshots.length > 0) {
-    for (const snapshot of snapshots) {
-      verificationCounts[snapshot.key] = snapshot.val()
+  const [verificationCounts, setVerificationCounts] = useState(undefined)
+  useEffect(() => {
+    if (verificationCounts === undefined) {
+      refToUse.once("value").then((s) => {
+        const counts = s.val()
+        setVerificationCounts(counts)
+      })
     }
-  }
+  }, [refToUse, verificationCounts])
 
   const upvoteFn = (r) => {
-    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).update(
-      {
-        upvote: r.upvote ? r.upvote + 1 : 1,
-        downvote: r.downvote ?? 0,
-      }
-    )
+    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).set({
+      upvote: r.upvote ? r.upvote + 1 : 1,
+      downvote: r.downvote ?? 0,
+    })
   }
 
   const downvoteFn = (r) => {
-    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).update(
-      {
-        upvote: r.upvote ?? 0,
-        downvote: r.downvote ? r.downvote + 1 : 1,
-      }
-    )
+    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).set({
+      upvote: r.upvote ?? 0,
+      downvote: r.downvote ? r.downvote + 1 : 1,
+    })
   }
 
   return <>{children({ downvoteFn, upvoteFn, verificationCounts })}</>
