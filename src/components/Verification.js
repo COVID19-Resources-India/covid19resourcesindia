@@ -18,8 +18,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
   fixed: "right",
   width: 100,
   render: (r) => {
-    const localStorageCounts = cella.get({ key: "votes" })
-    const alreadVoted = localStorageCounts[r.key]
+    const localStoragePresent = localStorage.getItem("votes")
+    let localStorageCounts = {}
+    if (localStoragePresent) {
+      localStorageCounts = cella.get({ key: "votes" })
+    }
+    const alreadVoted = localStorageCounts?.[r.key]
     return (
       <div className="vote-wrapper">
         <Button
@@ -44,7 +48,9 @@ const verificationColumn = ({ upvote, downvote }) => ({
 })
 
 const Verification = ({ category, children, selectedState }) => {
-  const localStorageCounts = cella.get({ key: "votes" })
+  const localStorageCounts = localStorage.getItem("votes")
+    ? cella.get({ key: "votes" })
+    : {}
   // fetch all by default
   let refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}`)
   // if state is selected in the context (from the header)
@@ -71,7 +77,6 @@ const Verification = ({ category, children, selectedState }) => {
   // Update db and add to local verificationCounts
   const vote = ({ r, counts, type }) => {
     const state = toKebabCase(r.State)
-    console.log("r", r.State, state)
     db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`).set(
       counts
     )
