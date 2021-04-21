@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 // antd
-import { Input, Table as AntDTable } from "antd"
+import { Empty, Input, Table as AntDTable } from "antd"
 // components
 import Loader from "components/Loader"
 // icons
 import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 // styles
 import "./Table.scss"
+import { Link } from "react-router-dom"
 
 // Accepts datasource and columns and displays in table format
 const Table = ({
@@ -16,6 +17,7 @@ const Table = ({
   loading = false,
   error = false,
   heading = "",
+  resetSearch = false,
 }) => {
   const [searchedValue, setSearchedValue] = useState("")
   const [filteredData, setFilteredData] = useState([])
@@ -35,6 +37,14 @@ const Table = ({
     if (searchedValue) setFilteredData(newFilteredData)
     else setFilteredData(dataSource)
   }, [dataSource, searchedValue])
+
+  useEffect(() => {
+    // If datasource changes i.e routes change, reset the search in case of external resources so that the empty box is not seen in that case.
+    if (resetSearch) {
+      setSearchedValue("")
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSource])
 
   const onSearchChange = (e) => setSearchedValue(e.target.value)
 
@@ -66,6 +76,22 @@ const Table = ({
         pagination={{
           defaultPageSize: 20,
           position: ["topCenter", "bottomCenter"],
+        }}
+        locale={{
+          emptyText: (
+            <Empty
+              className="empty-table"
+              description={
+                <span>
+                  Sorry, we're still gathering sources for this category in your
+                  region. Meanwhile, you can check if there's something in&nbsp;
+                  <Link to="/search/external-resources">
+                    External Resources.
+                  </Link>
+                </span>
+              }
+            />
+          ),
         }}
       />
     </div>

@@ -19,7 +19,7 @@ import "./Verification.scss"
 const VERIFICATION_COUNT_NODE = "verificationCounts"
 
 const verificationColumn = ({ upvote, downvote }) => ({
-  title: "Working?",
+  title: "Verified?",
   key: "action-feedback",
   fixed: "right",
   width: 100,
