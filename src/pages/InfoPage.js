@@ -1,11 +1,10 @@
+import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
-// pages
-// import WarRooms from "pages/WarRooms"
 // components
-import Loader from "components/Loader"
+import Table from "components/Table"
 // antd
-import { Result, Button, Table } from "antd"
+import { Result, Button } from "antd"
 // constants
 import { db } from "constant/firebase"
 // styles
@@ -67,33 +66,25 @@ const PAGE_LIST = {
 // -- can use custom components
 const InfoPageComponent = (props) => {
   const { columns, customComponent, heading, page } = props
-  const [snapshots, loading, error] = useList(
-    db.ref(`${SPREADSHEET_KEY}/${page}`)
-  )
-  const dataSource = snapshots.map((i) => i.val())
+  const dbRef = db.ref(`${SPREADSHEET_KEY}/${page}`)
+  const [snapshots, loading, error] = useList(dbRef)
+  const [dataSource, setDataSource] = useState([])
 
-  if (loading) {
-    return <Loader />
-  }
-  if (error) {
-    return <p>An error occurred</p>
-  }
-
-  if (!dataSource) return <p>No records returned.</p>
-
-  // We can also use a custom component if required for something
-  if (customComponent) {
-    return customComponent({ data: dataSource, heading })
-  }
+  useEffect(() => {
+    setDataSource(snapshots.map((i) => i.val()))
+  }, [snapshots])
 
   // Displays a table by default
   return (
     <div className="page-content">
       {heading && <h3 className="title">{heading}</h3>}
       <Table
-        columns={columns}
         dataSource={dataSource}
-        className="query-results"
+        columns={columns}
+        customComponent={customComponent}
+        error={error}
+        loading={loading}
+        heading={heading}
       />
     </div>
   )
