@@ -70,10 +70,22 @@ const Verification = ({ category, children, selectedState }) => {
     db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${r.State}/${r.key}`).set(
       counts
     )
-    setVerificationCounts((prev) => ({
-      ...prev,
-      [r.key]: counts,
-    }))
+
+    setVerificationCounts((prev) => {
+      if (!selectedState) {
+        return {
+          ...prev,
+          [r.State]: {
+            ...prev?.[r.State],
+            [r.key]: counts,
+          },
+        }
+      }
+      return {
+        ...prev,
+        [r.key]: counts,
+      }
+    })
 
     // update local storage to note if user has already voted for an id
     cella.store({

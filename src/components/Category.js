@@ -90,11 +90,18 @@ const CategoryComponent = ({ category, stateContext }) => {
         {(verificationProps) => {
           const { downvoteFn, upvoteFn, verificationCounts } = verificationProps
           // add verification counts in dataSource
-          const dataWithCounts = dataSource.map((i) => ({
-            ...i,
-            upvote: verificationCounts?.[i.key]?.upvote ?? 0,
-            downvote: verificationCounts?.[i.key]?.downvote ?? 0,
-          }))
+          const dataWithCounts = dataSource.map((i) => {
+            let field = verificationCounts?.[i.key]
+            // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+            if (!selectedState) {
+              field = verificationCounts?.[i.State]?.[i.key]
+            }
+            return {
+              ...i,
+              upvote: field?.upvote ?? 0,
+              downvote: field?.downvote ?? 0,
+            }
+          })
 
           return (
             <Table
