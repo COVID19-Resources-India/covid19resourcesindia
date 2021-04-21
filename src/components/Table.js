@@ -29,7 +29,7 @@ const Table = ({
       const values = Object.values(newEntry)
       return values.find((value = "") =>
         // Looks like in some cases the data was having value as number
-        value.toString().toLowerCase().includes(searchedValue.toLowerCase())
+        value?.toString().toLowerCase().includes(searchedValue.toLowerCase())
       )
     })
     if (searchedValue) setFilteredData(newFilteredData)
