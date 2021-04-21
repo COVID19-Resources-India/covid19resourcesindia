@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
 import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
 import MobileMenu from "components/MobileMenu"
@@ -21,7 +21,7 @@ export default function Header() {
   const handleScroll = () => {
     window.pageYOffset > "64" ? setIsSticky(true) : setIsSticky(false)
   }
-
+  // TODO: Figure out Submit Information, Contribute, Report URLs
   return (
     <header id="header" className={`header ${isSticky ? "sticky" : ""}`}>
       <div className="wrapper">
@@ -30,12 +30,22 @@ export default function Header() {
           COVID-19 Resources<span>India</span>
         </Link>
         <nav className="navigation">
-          <NavLink to="/contribute" className="item">
+          <a
+            href="https://forms.gle/rrbpk9SzGFmxbFpX9"
+            target="_blank"
+            rel="noreferrer"
+            className="item"
+          >
+            Submit Information
+          </a>
+          <a
+            href="https://bit.ly/32vqT5O"
+            target="_blank"
+            rel="noreferrer"
+            className="item"
+          >
             Contribute
-          </NavLink>
-          <NavLink to="/issue" className="item">
-            Report an Issue
-          </NavLink>
+          </a>
           <a
             href="https://t.me/covid19resourcesindia"
             className="item"
