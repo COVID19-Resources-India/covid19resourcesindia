@@ -2,7 +2,7 @@ import { useHistory, useParams } from "react-router-dom"
 // pages
 // import WarRooms from "pages/WarRooms"
 // components
-import CustomTable from "components/Table"
+import Table from "components/Table"
 // antd
 import { Result, Button } from "antd"
 // constants
@@ -66,19 +66,18 @@ const PAGE_LIST = {
 // -- can use custom components
 const InfoPageComponent = (props) => {
   const { columns, customComponent, heading, page } = props
-  const refToUse = db.ref(`${SPREADSHEET_KEY}/${page}`)
+  const dbRef = db.ref(`${SPREADSHEET_KEY}/${page}`)
 
   // Displays a table by default
   return (
     <div className="page-content">
       {heading && <h3 className="title">{heading}</h3>}
-      <CustomTable
-        refToUse={refToUse}
+      <Table
+        dbRef={dbRef}
         columns={columns}
         customComponent={customComponent}
         heading={heading}
       />
-
     </div>
   )
 }

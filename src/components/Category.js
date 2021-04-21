@@ -1,5 +1,5 @@
 // hooks
-import { useContext} from "react"
+import { useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
@@ -12,7 +12,7 @@ import { StateContext } from "context/StateContext"
 import { toTitleCase } from "utils/caseHelper"
 // components
 import Loader from "components/Loader"
-import CustomTable from "components/Table"
+import Table from "components/Table"
 // icons
 import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
 import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
@@ -65,11 +65,11 @@ const CategoryComponent = ({ category, stateContext }) => {
   const { selectedState } = stateContext
 
   // fetch all by default
-  let refToUse = db.ref(`${SPREADSHEET_KEY}/${category}`)
+  let dbRef = db.ref(`${SPREADSHEET_KEY}/${category}`)
   // if state is selected in the context (from the header)
   // filter based on state
   if (selectedState) {
-    refToUse = db
+    dbRef = db
       .ref(`${SPREADSHEET_KEY}/${category}`)
       .orderByChild("State")
       .equalTo(selectedState)
@@ -80,12 +80,7 @@ const CategoryComponent = ({ category, stateContext }) => {
     ? COLUMNS
     : COLUMNS.filter((x) => x.key !== "State")
 
-  return (
-    <CustomTable
-      refToUse={refToUse}
-      columns={columns}
-    />
-  )
+  return <Table dbRef={dbRef} columns={columns} />
 }
 
 // Fetches data for the category and displays in the antd table

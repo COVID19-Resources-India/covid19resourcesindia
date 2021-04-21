@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useList } from "react-firebase-hooks/database"
 // antd
-import { Input, Table } from "antd"
+import { Input, Table as AntDTable } from "antd"
 // components
 import Loader from "components/Loader"
 // icons
@@ -9,13 +9,9 @@ import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 // styles
 import "./Table.scss"
 
-const CustomTable = ({
-  refToUse,
-  columns,
-  customComponent = null,
-  heading = "",
-}) => {
-  const [snapshots, loading, error] = useList(refToUse)
+// Fetches data from firebase and displays in table format
+const Table = ({ dbRef, columns, customComponent = null, heading = "" }) => {
+  const [snapshots, loading, error] = useList(dbRef)
   const [searchedValue, setSearchedValue] = useState("")
   const [dataSource, setDataSource] = useState([])
   const [filteredData, setFilteredData] = useState([])
@@ -63,7 +59,7 @@ const CustomTable = ({
         onChange={onSearchChange}
         value={searchedValue}
       />
-      <Table
+      <AntDTable
         columns={columns}
         dataSource={filteredData}
         size="small"
@@ -76,4 +72,4 @@ const CustomTable = ({
   )
 }
 
-export default CustomTable
+export default Table
