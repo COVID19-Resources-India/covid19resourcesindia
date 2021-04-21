@@ -17,34 +17,12 @@ import Loader from "components/Loader"
 import Verification from "components/Verification"
 // styles
 import Table from "components/Table"
-
-const COLUMNS = [
-  {
-    title: "State",
-    dataIndex: "State",
-    key: "State",
-  },
-  {
-    title: "Distributor Name",
-    dataIndex: "Distributor Name",
-    key: "Distributor Name",
-  },
-  {
-    title: "Telephone",
-    dataIndex: "Telephone",
-    key: "Telephone",
-  },
-  {
-    title: "Address",
-    dataIndex: "Address",
-    key: "Address",
-  },
-  {
-    title: "E-Mail Address",
-    dataIndex: "E-Mail Address",
-    key: "E-Mail Address",
-  },
-]
+// columns
+import {
+  COLUMNS_PER_CATEGORY,
+  DEFAULT_COLUMNS,
+  buildColumns,
+} from "constant/columns"
 
 const CategoryComponent = ({ category, stateContext }) => {
   const { selectedState } = stateContext
@@ -66,11 +44,12 @@ const CategoryComponent = ({ category, stateContext }) => {
     setDataSource(snapshots.map((i) => i.val()))
   }, [snapshots])
 
+  const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
   // -> Show state column if no state is selected
   const columns = !selectedState
-    ? COLUMNS
-    : COLUMNS.filter((x) => x.key !== "State")
+    ? buildColumns(preDefinedColumns)
+    : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
     <Verification selectedState={selectedState} category={category}>
