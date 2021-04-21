@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 // modules
-import ReactTimeAgo from 'react-time-ago'
+import ReactTimeAgo from "react-time-ago"
 // antd
 import { Button } from "antd"
 // icons
@@ -45,7 +45,13 @@ const verificationColumn = ({ upvote, downvote }) => ({
             className="vote-button downvote"
             disabled={alreadyVoted && alreadyVoted?.downvoted}
             onClick={() => downvote({ r, isChangingVote: alreadyVoted })}
-            icon={alreadyVoted?.downvoted ? <DownvoteFilledIcon /> : <DownvoteIcon />}
+            icon={
+              alreadyVoted?.downvoted ? (
+                <DownvoteFilledIcon />
+              ) : (
+                <DownvoteIcon />
+              )
+            }
           >
             {r.downvote}
           </Button>
@@ -53,7 +59,9 @@ const verificationColumn = ({ upvote, downvote }) => ({
         {r.lastVoted && (
           <div className="last-voted">
             <span className="label">Last {r.lastVotedType}:</span>
-            <span className="value">{<ReactTimeAgo date={new Date(r.lastVoted)} locale="en-IN" />}</span>
+            <span className="value">
+              {<ReactTimeAgo date={new Date(r.lastVoted)} locale="en-IN" />}
+            </span>
           </div>
         )}
       </div>

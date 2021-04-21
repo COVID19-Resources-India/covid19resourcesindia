@@ -171,13 +171,13 @@ const EmergencyInfo = () => {
   return (
     <section className="page-content">
       <div className="resources-wrapper">
-        <EmergencyResources heading="National Resources" filterBy="National" />
         {selectedState && (
           <EmergencyResources
             heading={`Resources in ${selectedState}`}
             filterBy={selectedState}
           />
         )}
+        <EmergencyResources heading="National Resources" filterBy="National" />
         <Documents />
         <LatestUpdates />
       </div>
