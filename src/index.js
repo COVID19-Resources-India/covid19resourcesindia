@@ -13,7 +13,7 @@ import "constant/firebase.js"
 import StateContextWrapper from "context/StateContext"
 //ant-d
 import "antd/dist/antd.css"
-import "common/styles/antd-overrides.scss";
+import "common/styles/antd-overrides.scss"
 
 ReactDOM.render(
   <React.StrictMode>
