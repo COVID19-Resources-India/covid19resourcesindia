@@ -67,6 +67,9 @@ const verificationColumn = ({ upvote, downvote }) => ({
       </div>
     )
   },
+  sortDirections: ['ascend', 'descend', 'ascend'],
+  defaultSortOrder: 'ascend',
+  sorter: (a, b, sortOrder) => sortOrder === "descend" ? a.upvote - b.upvote : b.lastVoted - a.lastVoted
 })
 
 const Verification = ({ category, children, selectedState }) => {
