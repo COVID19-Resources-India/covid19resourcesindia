@@ -42,7 +42,8 @@ const verificationColumn = ({ upvote, downvote }) => ({
         >
           {r.downvote}
         </Button>
-        {r.lastVerified && <span>{new Date(r.lastVerified).toString()}</span>}
+        {r.lastVoted && <span>{new Date(r.lastVoted).toString()}</span>}
+        {r.lastVotedType && <span>{r.lastVotedType}</span>}
       </div>
     )
   },
@@ -80,14 +81,13 @@ const Verification = ({ category, children, selectedState }) => {
     const state = toKebabCase(r.State)
 
     // update timestamp
-    db.ref(ref)
-      .child("lastVerified")
-      .set(firebase.database.ServerValue.TIMESTAMP)
+    db.ref(ref).child("lastVoted").set(firebase.database.ServerValue.TIMESTAMP)
+    db.ref(ref).child("lastVotedType").set(type)
 
     // update local verification counts
     setVerificationCounts((prev) => {
       const common = {
-        [r.key]: { ...counts, lastVerified: new Date() },
+        [r.key]: { ...counts, lastVoted: new Date(), lastVotedType: type },
       }
       if (!selectedState) {
         return {

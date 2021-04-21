@@ -87,7 +87,8 @@ const CategoryComponent = ({ category, stateContext }) => {
             ...i,
             upvote: field?.upvote ?? 0,
             downvote: field?.downvote ?? 0,
-            lastVerified: field?.lastVerified ?? null,
+            lastVoted: field?.lastVoted ?? null,
+            lastVotedType: field?.lastVotedType ?? null,
           }
         })
 
