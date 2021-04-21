@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react"
+// modules
+import ReactTimeAgo from 'react-time-ago'
 // antd
 import { Button } from "antd"
 // icons
 import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
 import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
+import { ReactComponent as UpvoteFilledIcon } from "assets/icons/upvote-filled.svg"
+import { ReactComponent as DownvoteFilledIcon } from "assets/icons/downvote-filled.svg"
 // constants
 import firebase, { db } from "constant/firebase"
 // utils
 import cella from "utils/cella"
 import { toKebabCase } from "utils/caseHelper"
+// stlyes
+import "./Verification.scss"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
 
@@ -23,27 +29,33 @@ const verificationColumn = ({ upvote, downvote }) => ({
     if (localStoragePresent) {
       localStorageCounts = cella.get({ key: "votes" })
     }
-    const alreadVoted = localStorageCounts?.[r.key]
+    const alreadyVoted = localStorageCounts?.[r.key]
     return (
       <div className="vote-wrapper">
-        <Button
-          className="vote-button"
-          disabled={alreadVoted && alreadVoted?.upvoted}
-          onClick={() => upvote({ r, isChangingVote: alreadVoted })}
-          icon={<UpvoteIcon />}
-        >
-          {r.upvote}
-        </Button>
-        <Button
-          className="vote-button"
-          disabled={alreadVoted && alreadVoted?.downvoted}
-          onClick={() => downvote({ r, isChangingVote: alreadVoted })}
-          icon={<DownvoteIcon />}
-        >
-          {r.downvote}
-        </Button>
-        {r.lastVoted && <span>{new Date(r.lastVoted).toString()}</span>}
-        {r.lastVotedType && <span>{r.lastVotedType}</span>}
+        <div className="vote-button-wrapper">
+          <Button
+            className="vote-button upvote"
+            disabled={alreadyVoted && alreadyVoted?.upvoted}
+            onClick={() => upvote({ r, isChangingVote: alreadyVoted })}
+            icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
+          >
+            {r.upvote}
+          </Button>
+          <Button
+            className="vote-button downvote"
+            disabled={alreadyVoted && alreadyVoted?.downvoted}
+            onClick={() => downvote({ r, isChangingVote: alreadyVoted })}
+            icon={alreadyVoted?.downvoted ? <DownvoteFilledIcon /> : <DownvoteIcon />}
+          >
+            {r.downvote}
+          </Button>
+        </div>
+        {r.lastVoted && (
+          <div className="last-voted">
+            <span className="label">Last {r.lastVotedType}:</span>
+            <span className="value">{<ReactTimeAgo date={new Date(r.lastVoted)} locale="en-IN" />}</span>
+          </div>
+        )}
       </div>
     )
   },

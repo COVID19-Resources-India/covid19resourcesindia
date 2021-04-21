@@ -14,6 +14,11 @@ import StateContextWrapper from "context/StateContext"
 //ant-d
 import "antd/dist/antd.css"
 import "common/styles/antd-overrides.scss"
+// time-ago
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+
+TimeAgo.addDefaultLocale(en)
 
 ReactDOM.render(
   <React.StrictMode>
