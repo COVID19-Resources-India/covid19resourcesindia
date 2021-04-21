@@ -37,6 +37,11 @@
         }
       }
     }
+    .empty-table {
+      max-width: 40%;
+      margin: 40px auto;
+      font-weight: $type-bold;
+    }
   }
 
   @media screen and (max-width: 960px) {

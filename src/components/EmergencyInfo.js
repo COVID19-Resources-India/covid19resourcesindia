@@ -65,12 +65,12 @@ const LatestUpdates = () => {
         </a>
         <a
           className="item"
-          href="https://im.rediff.com/news/2021/apr/13break-the-chain.pdf"
+          href="https://drive.google.com/file/d/1BtHPekCyfwONH1dMKjNpCYkqGJFtQjSW/view?usp=sharing"
           target="_blank"
           rel="noreferrer"
         >
           <PDFIcon />
-          <span>Maharashtra: Break the Chain (14 Apr) - Official Order</span>
+          <span>Maharashtra: Break the Chain (21 Apr) - Official Order</span>
         </a>
       </div>
     </div>

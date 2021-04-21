@@ -29,9 +29,10 @@ const CategoryComponent = ({ category, stateContext }) => {
 
   // fetch all by default
   let dbRef = db.ref(`${SPREADSHEET_KEY}/${category}`)
+  const isExternalResources = category === "external-resources"
   // if state is selected in the context (from the header)
   // filter based on state
-  if (selectedState) {
+  if (selectedState && !isExternalResources) {
     dbRef = db
       .ref(`${SPREADSHEET_KEY}/${category}`)
       .orderByChild("State")
@@ -47,9 +48,10 @@ const CategoryComponent = ({ category, stateContext }) => {
   const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
   // -> Show state column if no state is selected
-  const columns = !selectedState
-    ? buildColumns(preDefinedColumns)
-    : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
+  const columns =
+    !selectedState || isExternalResources
+      ? buildColumns(preDefinedColumns)
+      : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
     <Verification selectedState={selectedState} category={category}>
@@ -71,18 +73,24 @@ const CategoryComponent = ({ category, stateContext }) => {
           }
         })
 
+        let updatedColumns = columns
+        if (!isExternalResources) {
+          updatedColumns = [
+            ...columns,
+            verificationColumn({
+              upvote: upvoteFn,
+              downvote: downvoteFn,
+            }),
+          ]
+        }
+
         return (
           <Table
-            columns={[
-              ...columns,
-              verificationColumn({
-                upvote: upvoteFn,
-                downvote: downvoteFn,
-              }),
-            ]}
+            columns={updatedColumns}
             dataSource={dataWithCounts}
             loading={loading}
             error={error}
+            resetSearch={isExternalResources}
           />
         )
       }}
