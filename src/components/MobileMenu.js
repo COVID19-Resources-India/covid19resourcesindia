@@ -9,30 +9,28 @@ import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
 import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
 
 class MobileMenu extends React.Component {
-
-  state = { visible: false };
+  state = { visible: false }
 
   showDrawer = () => {
     this.setState({
       visible: true,
-    });
-    console.log('Drawer updated')
-  };
+    })
+  }
 
   onClose = () => {
     this.setState({
       visible: false,
-    });
-  };
+    })
+  }
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({
       placement: e.target.value,
-    });
-  };
+    })
+  }
 
   render() {
-    const { visible } = this.state;
+    const { visible } = this.state
     return (
       <>
         <Button onClick={this.showDrawer} className="mobile-menu-button">
@@ -53,30 +51,30 @@ class MobileMenu extends React.Component {
               COVID-19 Resources<span>India</span>
             </Link>
             <div className="navigation">
-            <NavLink to="/contribute" className="item">
+              <NavLink to="/contribute" className="item">
                 Contribute
-            </NavLink>
-            <NavLink to="/issue" className="item">
-              Report an Issue
-            </NavLink>
+              </NavLink>
+              <NavLink to="/issue" className="item">
+                Report an Issue
+              </NavLink>
             </div>
             <div className="navigation-icons">
-            <a
-            href="https://t.me/covid19resourcesindia"
-            className="item"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <TelegramIcon />
-          </a>
-          <a
-            href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
-            className="item"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <GithubIcon />
-          </a>
+              <a
+                href="https://t.me/covid19resourcesindia"
+                className="item"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <TelegramIcon />
+              </a>
+              <a
+                href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
+                className="item"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GithubIcon />
+              </a>
             </div>
           </div>
         </Drawer>

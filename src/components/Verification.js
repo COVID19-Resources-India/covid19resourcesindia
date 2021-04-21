@@ -42,6 +42,7 @@ const verificationColumn = ({ upvote, downvote }) => ({
         >
           {r.downvote}
         </Button>
+        {r.lastVerified && <span>{new Date(r.lastVerified).toString()}</span>}
       </div>
     )
   },
@@ -75,29 +76,31 @@ const Verification = ({ category, children, selectedState }) => {
   }, [refToUse, verificationCounts])
 
   // Update db and add to local verificationCounts
-  const vote = ({ r, counts, type }) => {
+  const vote = ({ r, ref, counts, type }) => {
     const state = toKebabCase(r.State)
-    // db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`).
-    // .child(user_uid)
-    // .child('searches')
-    // .set(firebase.database.ServerValue.increment(-1))
-    // .set(
-    //   counts
-    // )
 
+    // update timestamp
+    db.ref(ref)
+      .child("lastVerified")
+      .set(firebase.database.ServerValue.TIMESTAMP)
+
+    // update local verification counts
     setVerificationCounts((prev) => {
+      const common = {
+        [r.key]: { ...counts, lastVerified: new Date() },
+      }
       if (!selectedState) {
         return {
           ...prev,
           [state]: {
             ...prev?.[state],
-            [r.key]: counts,
+            ...common,
           },
         }
       }
       return {
         ...prev,
-        [r.key]: counts,
+        ...common,
       }
     })
 
@@ -116,22 +119,21 @@ const Verification = ({ category, children, selectedState }) => {
 
   const upvoteFn = ({ r, isChangingVote = false }) => {
     const state = toKebabCase(r.State)
+    const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
 
     let downvoteCount = r.downvote ?? 0
     // reduce downvote count if person is changing their vote
     if (isChangingVote) {
       downvoteCount = downvoteCount === 0 ? 0 : downvoteCount - 1
-      db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`)
+      db.ref(ref)
         .child("downvote")
         .set(firebase.database.ServerValue.increment(-1))
     }
-
-    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`)
-      .child("upvote")
-      .set(firebase.database.ServerValue.increment(1))
+    db.ref(ref).child("upvote").set(firebase.database.ServerValue.increment(1))
 
     vote({
       r,
+      ref,
       counts: {
         upvote: r.upvote ? r.upvote + 1 : 1,
         downvote: downvoteCount,
@@ -142,21 +144,22 @@ const Verification = ({ category, children, selectedState }) => {
 
   const downvoteFn = ({ r, isChangingVote = false }) => {
     const state = toKebabCase(r.State)
+    const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
     let upvoteCount = r.upvote ?? 0
     // reduce upvote count if person is changing their vote
     if (isChangingVote) {
       upvoteCount = upvoteCount === 0 ? 0 : upvoteCount - 1
-      db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`)
+      db.ref(ref)
         .child("upvote")
         .set(firebase.database.ServerValue.increment(-1))
     }
-
-    db.ref(`${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`)
+    db.ref(ref)
       .child("downvote")
       .set(firebase.database.ServerValue.increment(1))
 
     vote({
       r,
+      ref,
       counts: {
         upvote: upvoteCount,
         downvote: r.downvote ? r.downvote + 1 : 1,
