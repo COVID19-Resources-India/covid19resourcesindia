@@ -13,7 +13,6 @@ const StateSelector = () => {
   const { selectedState, setSelectedState } = useContext(StateContext)
 
   function onChange(value) {
-    // console.log(`selected ${value}`)
     setSelectedState(value)
   }
 

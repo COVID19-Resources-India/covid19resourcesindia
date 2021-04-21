@@ -1,6 +1,7 @@
 // hooks
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
+import { useList } from "react-firebase-hooks/database"
 // antd
 import { Result, Button } from "antd"
 // constants
@@ -9,13 +10,13 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 // context
 import { StateContext } from "context/StateContext"
 // helper
-import { toTitleCase } from "utils/caseHelper"
+import { toKebabCase, toTitleCase } from "utils/caseHelper"
+import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
+import Verification from "components/Verification"
+// styles
 import Table from "components/Table"
-// icons
-import { ReactComponent as UpvoteIcon } from "assets/icons/upvote.svg"
-import { ReactComponent as DownvoteIcon } from "assets/icons/downvote.svg"
 
 const COLUMNS = [
   {
@@ -43,22 +44,6 @@ const COLUMNS = [
     dataIndex: "E-Mail Address",
     key: "E-Mail Address",
   },
-  {
-    title: "Working?",
-    key: "action-feedback",
-    fixed: "right",
-    width: 100,
-    render: () => (
-      <div className="vote-wrapper">
-        <Button className="vote-button" icon={<UpvoteIcon />}>
-          12
-        </Button>
-        <Button className="vote-button" icon={<DownvoteIcon />}>
-          2
-        </Button>
-      </div>
-    ),
-  },
 ]
 
 const CategoryComponent = ({ category, stateContext }) => {
@@ -74,13 +59,56 @@ const CategoryComponent = ({ category, stateContext }) => {
       .orderByChild("State")
       .equalTo(selectedState)
   }
+
+  const [snapshots, loading, error] = useList(dbRef)
+  const [dataSource, setDataSource] = useState([])
+  useEffect(() => {
+    setDataSource(snapshots.map((i) => i.val()))
+  }, [snapshots])
+
   // Update columns
   // -> Show state column if no state is selected
   const columns = !selectedState
     ? COLUMNS
     : COLUMNS.filter((x) => x.key !== "State")
 
-  return <Table dbRef={dbRef} columns={columns} />
+  return (
+    <Verification selectedState={selectedState} category={category}>
+      {(verificationProps) => {
+        const { downvoteFn, upvoteFn, verificationCounts } = verificationProps
+        // add verification counts in dataSource
+        const dataWithCounts = dataSource.map((i) => {
+          let field = verificationCounts?.[i.key]
+          // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+          if (!selectedState) {
+            field = verificationCounts?.[toKebabCase(i.State)]?.[i.key]
+          }
+          return {
+            ...i,
+            upvote: field?.upvote ?? 0,
+            downvote: field?.downvote ?? 0,
+            lastVoted: field?.lastVoted ?? null,
+            lastVotedType: field?.lastVotedType ?? null,
+          }
+        })
+
+        return (
+          <Table
+            columns={[
+              ...columns,
+              verificationColumn({
+                upvote: upvoteFn,
+                downvote: downvoteFn,
+              }),
+            ]}
+            dataSource={dataWithCounts}
+            loading={loading}
+            error={error}
+          />
+        )
+      }}
+    </Verification>
+  )
 }
 
 // Fetches data for the category and displays in the antd table
@@ -91,6 +119,7 @@ const Category = () => {
   const stateContext = useContext(StateContext)
   const { loadingState } = stateContext
 
+  if (!loadingState && !category) return null
   // Only fetch category from firebase if it is in the approved list of CATEGORIES
   if (!CATEGORIES.includes(toTitleCase(category))) {
     return (

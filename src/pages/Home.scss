@@ -71,6 +71,7 @@
       .resources-wrapper {
         display: grid;
         justify-content: space-between;
+        column-gap: 80px;
         row-gap: 40px;
         // grid-template-areas:
         //   "emergency emergency"

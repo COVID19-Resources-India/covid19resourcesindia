@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
-// pages
-// import WarRooms from "pages/WarRooms"
+import { useList } from "react-firebase-hooks/database"
 // components
 import Table from "components/Table"
 // antd
@@ -67,15 +67,23 @@ const PAGE_LIST = {
 const InfoPageComponent = (props) => {
   const { columns, customComponent, heading, page } = props
   const dbRef = db.ref(`${SPREADSHEET_KEY}/${page}`)
+  const [snapshots, loading, error] = useList(dbRef)
+  const [dataSource, setDataSource] = useState([])
+
+  useEffect(() => {
+    setDataSource(snapshots.map((i) => i.val()))
+  }, [snapshots])
 
   // Displays a table by default
   return (
     <div className="page-content">
       {heading && <h3 className="title">{heading}</h3>}
       <Table
-        dbRef={dbRef}
+        dataSource={dataSource}
         columns={columns}
         customComponent={customComponent}
+        error={error}
+        loading={loading}
         heading={heading}
       />
     </div>

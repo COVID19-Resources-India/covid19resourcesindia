@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { useList } from "react-firebase-hooks/database"
 // antd
 import { Input, Table as AntDTable } from "antd"
 // components
@@ -9,16 +8,17 @@ import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 // styles
 import "./Table.scss"
 
-// Fetches data from firebase and displays in table format
-const Table = ({ dbRef, columns, customComponent = null, heading = "" }) => {
-  const [snapshots, loading, error] = useList(dbRef)
+// Accepts datasource and columns and displays in table format
+const Table = ({
+  dataSource,
+  columns,
+  customComponent = null,
+  loading = false,
+  error = false,
+  heading = "",
+}) => {
   const [searchedValue, setSearchedValue] = useState("")
-  const [dataSource, setDataSource] = useState([])
   const [filteredData, setFilteredData] = useState([])
-
-  useEffect(() => {
-    setDataSource(snapshots.map((i) => i.val()))
-  }, [snapshots])
 
   useEffect(() => {
     const newFilteredData = dataSource.filter((entry) => {
@@ -29,7 +29,7 @@ const Table = ({ dbRef, columns, customComponent = null, heading = "" }) => {
       const values = Object.values(newEntry)
       return values.find((value = "") =>
         // Looks like in some cases the data was having value as number
-        value.toString().toLowerCase().includes(searchedValue.toLowerCase())
+        value?.toString().toLowerCase().includes(searchedValue.toLowerCase())
       )
     })
     if (searchedValue) setFilteredData(newFilteredData)
