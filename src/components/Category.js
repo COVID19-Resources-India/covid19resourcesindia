@@ -77,7 +77,7 @@ const CategoryComponent = ({ category, stateContext }) => {
         
         if (!isExternalResources) {
           updatedColumns = [
-            ...updatedColumns,
+            ...columns,
             verificationColumn({
               upvote: upvoteFn,
               downvote: downvoteFn,
