@@ -4,7 +4,7 @@ const CATEGORIES = [
   "Oxygen Cylinders",
   "Remdesivir",
   "Tocilizumab",
-  "Ventilators",
+  "External Resources",
 ]
 
 export { CATEGORIES, SPREADSHEET_KEY }
