@@ -23,7 +23,7 @@ const verificationColumn = ({ upvote, downvote }) => ({
   key: "action-feedback",
   fixed: "right",
   width: 100,
-  render: (r) => {
+  render: (r, record, index) => {
     const localStoragePresent = localStorage.getItem("votes")
     let localStorageCounts = {}
     if (localStoragePresent) {
@@ -36,7 +36,7 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button upvote"
             disabled={alreadyVoted && alreadyVoted?.upvoted}
-            onClick={() => upvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() => upvote({ r, isChangingVote: alreadyVoted, index })}
             icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
           >
             {r.upvote}
@@ -44,7 +44,7 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button downvote"
             disabled={alreadyVoted && alreadyVoted?.downvoted}
-            onClick={() => downvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() => downvote({ r, isChangingVote: alreadyVoted, index })}
             icon={
               alreadyVoted?.downvoted ? (
                 <DownvoteFilledIcon />
@@ -67,12 +67,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
       </div>
     )
   },
-  sortDirections: ['ascend', 'descend', 'ascend'],
-  defaultSortOrder: 'ascend',
-  sorter: (a, b, sortOrder) => sortOrder === "descend" ? a.upvote - b.upvote : b.lastVoted - a.lastVoted
+  // sortDirections: ['ascend', 'descend', 'ascend'],
+  // defaultSortOrder: 'ascend',
+  // sorter: (a, b, sortOrder) => sortOrder === "descend" ? a.upvote - b.upvote : b.lastVoted - a.lastVoted
 })
 
-const Verification = ({ category, children, selectedState }) => {
+const Verification = ({ category, children, selectedState, dataSource }) => {
   const localStorageCounts = localStorage.getItem("votes")
     ? cella.get({ key: "votes" })
     : {}
@@ -85,47 +85,52 @@ const Verification = ({ category, children, selectedState }) => {
       `${VERIFICATION_COUNT_NODE}/${category}/${toKebabCase(selectedState)}`
     )
   }
-  const [verificationCounts, setVerificationCounts] = useState(undefined)
+  const [dataWithCounts, setDataWithCounts] = useState([])
 
   // Only fetch counts once instead of keeping a watcher
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
-    if (verificationCounts === undefined) {
+    if (!dataWithCounts.length && dataSource.length) {
       refToUse.once("value").then((s) => {
         const counts = s.val()
-        setVerificationCounts(counts)
+        // add verification counts in dataSource
+        const dataWithCounts = dataSource
+          .map((i) => {
+            let field = counts?.[i.key]
+            // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+            if (!selectedState) {
+              field = counts?.[toKebabCase(i.State)]?.[i.key]
+            }
+            return {
+              ...i,
+              upvote: field?.upvote ?? 0,
+              downvote: field?.downvote ?? 0,
+              lastVoted: field?.lastVoted ?? null,
+              lastVotedType: field?.lastVotedType ?? null,
+            }
+          })
+          .sort((a, b) => b.lastVoted - a.lastVoted)
+
+        setDataWithCounts(dataWithCounts)
       })
     }
-  }, [refToUse, verificationCounts])
+  }, [refToUse, dataWithCounts, dataSource, selectedState])
 
-  // Update db and add to local verificationCounts
-  const vote = ({ r, ref, counts, type }) => {
-    const state = toKebabCase(r.State)
-
+  // Update db and add to local dataWithCounts
+  const vote = ({ r, ref, counts, type, index }) => {
     // update timestamp
     db.ref(ref).child("lastVoted").set(firebase.database.ServerValue.TIMESTAMP)
     db.ref(ref).child("lastVotedType").set(type)
 
-    // update local verification counts
-    setVerificationCounts((prev) => {
-      const common = {
-        [r.key]: { ...counts, lastVoted: new Date(), lastVotedType: type },
+    const common = { ...counts, lastVoted: new Date(), lastVotedType: type }
+    const newDataWithCounts = [...dataWithCounts]
+      newDataWithCounts[index] = {
+        ...newDataWithCounts[index],
+        ...common
       }
-      if (!selectedState) {
-        return {
-          ...prev,
-          [state]: {
-            ...prev?.[state],
-            ...common,
-          },
-        }
-      }
-      return {
-        ...prev,
-        ...common,
-      }
-    })
+      
+    setDataWithCounts(newDataWithCounts)
 
     // update local storage to note if user has already voted for an id
     cella.store({
@@ -140,7 +145,7 @@ const Verification = ({ category, children, selectedState }) => {
     })
   }
 
-  const upvoteFn = ({ r, isChangingVote = false }) => {
+  const upvoteFn = ({ r, isChangingVote = false, index }) => {
     const state = toKebabCase(r.State)
     const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
 
@@ -162,10 +167,11 @@ const Verification = ({ category, children, selectedState }) => {
         downvote: downvoteCount,
       },
       type: "upvote",
+      index
     })
   }
 
-  const downvoteFn = ({ r, isChangingVote = false }) => {
+  const downvoteFn = ({ r, isChangingVote = false, index }) => {
     const state = toKebabCase(r.State)
     const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
     let upvoteCount = r.upvote ?? 0
@@ -188,10 +194,11 @@ const Verification = ({ category, children, selectedState }) => {
         downvote: r.downvote ? r.downvote + 1 : 1,
       },
       type: "downvote",
+      index
     })
   }
 
-  return <>{children({ downvoteFn, upvoteFn, verificationCounts })}</>
+  return <>{children({ downvoteFn, upvoteFn, dataWithCounts })}</>
 }
 
 export default Verification

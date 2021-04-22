@@ -43,7 +43,7 @@ const Table = ({
     if (resetSearch) {
       setSearchedValue("")
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSource])
 
   const onSearchChange = (e) => setSearchedValue(e.target.value)
