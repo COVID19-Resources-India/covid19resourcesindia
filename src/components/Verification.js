@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 // modules
 import ReactTimeAgo from "react-time-ago"
 // antd
@@ -13,6 +13,7 @@ import firebase, { db } from "constant/firebase"
 // utils
 import cella from "utils/cella"
 import { toKebabCase } from "utils/caseHelper"
+import { usePrevious } from "utils/hooksHelper"
 // stlyes
 import "./Verification.scss"
 
@@ -84,25 +85,38 @@ const Verification = ({ category, children, selectedState }) => {
   }
   const [verificationCounts, setVerificationCounts] = useState(undefined)
 
-  const refetchCounts = useCallback(() => {
-    refToUse.once("value").then((s) => {
+  const refetchVerification = useCallback(() => {
+    return refToUse.once("value").then((s) => {
       const counts = s.val()
       setVerificationCounts(counts)
     })
-  }, [refToUse])
+  }, [refToUse, setVerificationCounts])
+
   // Only fetch counts once instead of keeping a watcher
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
     if (verificationCounts === undefined) {
-      refetchCounts()
+      refetchVerification()
     }
-  }, [refetchCounts, verificationCounts])
+  }, [refetchVerification, verificationCounts])
 
+  const prevCategory = usePrevious(category)
+  const prevSelectedState = usePrevious(selectedState)
+
+  // refetch counts if category / selected state changes
+  // required because this component does not unmount
   useEffect(() => {
-    // if category or selected state changed, refetch counts
-    refetchCounts()
-  }, [category, refetchCounts, selectedState])
+    if (prevCategory !== category || prevSelectedState !== selectedState) {
+      refetchVerification()
+    }
+  }, [
+    prevCategory,
+    prevSelectedState,
+    category,
+    selectedState,
+    refetchVerification,
+  ])
 
   // Update db and add to local verificationCounts
   const vote = ({ r, ref, counts, type }) => {
