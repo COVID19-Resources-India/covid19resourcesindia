@@ -74,6 +74,7 @@ const CategoryComponent = ({ category, stateContext }) => {
         })
 
         let updatedColumns = columns
+        
         if (!isExternalResources) {
           updatedColumns = [
             ...columns,
