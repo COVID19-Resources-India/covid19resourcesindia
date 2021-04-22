@@ -40,6 +40,6 @@ const unionTerritories = [
   "Puducherry",
 ]
 
-const all = [...states, ...unionTerritories]
+const all = [...states, ...unionTerritories].sort()
 
 export { all as states }
