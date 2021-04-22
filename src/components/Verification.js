@@ -16,8 +16,16 @@ import { toKebabCase } from "utils/caseHelper"
 import { usePrevious } from "utils/hooksHelper"
 // stlyes
 import "./Verification.scss"
+import confirm from "antd/lib/modal/confirm"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
+
+const showVoteConfirmation = ({ fn, type }) => {
+  confirm({
+    title: `Are you sure you want to ${type} this?`,
+    onOk: fn,
+  })
+}
 
 const verificationColumn = ({ upvote, downvote }) => ({
   title: "Verified?",
@@ -37,7 +45,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button upvote"
             disabled={alreadyVoted && alreadyVoted?.upvoted}
-            onClick={() => upvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: () => upvote({ r, isChangingVote: alreadyVoted }),
+                type: "upvote",
+              })
+            }
             icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
           >
             {r.upvote}
@@ -45,7 +58,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button downvote"
             disabled={alreadyVoted && alreadyVoted?.downvoted}
-            onClick={() => downvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: () => downvote({ r, isChangingVote: alreadyVoted }),
+                type: "downvote",
+              })
+            }
             icon={
               alreadyVoted?.downvoted ? (
                 <DownvoteFilledIcon />
