@@ -15,8 +15,18 @@ import cella from "utils/cella"
 import { toKebabCase } from "utils/caseHelper"
 // stlyes
 import "./Verification.scss"
+import confirm from "antd/lib/modal/confirm"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
+
+const showVoteConfirmation = ({ fn, ...rest }) => {
+  confirm({
+    title: "Are you sure you want to vote this?",
+    onOk: () => {
+      fn(rest)
+    },
+  })
+}
 
 const verificationColumn = ({ upvote, downvote }) => ({
   title: "Verified?",
@@ -36,7 +46,13 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button upvote"
             disabled={alreadyVoted && alreadyVoted?.upvoted}
-            onClick={() => upvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: upvote,
+                r,
+                isChangingVote: alreadyVoted,
+              })
+            }
             icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
           >
             {r.upvote}
@@ -44,7 +60,13 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button downvote"
             disabled={alreadyVoted && alreadyVoted?.downvoted}
-            onClick={() => downvote({ r, isChangingVote: alreadyVoted })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: downvote,
+                r,
+                isChangingVote: alreadyVoted,
+              })
+            }
             icon={
               alreadyVoted?.downvoted ? (
                 <DownvoteFilledIcon />
