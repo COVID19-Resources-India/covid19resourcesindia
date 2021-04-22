@@ -19,12 +19,10 @@ import confirm from "antd/lib/modal/confirm"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
 
-const showVoteConfirmation = ({ fn, ...rest }) => {
+const showVoteConfirmation = ({ fn, type }) => {
   confirm({
-    title: "Are you sure you want to vote this?",
-    onOk: () => {
-      fn(rest)
-    },
+    title: `Are you sure you want to ${type} this?`,
+    onOk: fn,
   })
 }
 
@@ -48,9 +46,8 @@ const verificationColumn = ({ upvote, downvote }) => ({
             disabled={alreadyVoted && alreadyVoted?.upvoted}
             onClick={() =>
               showVoteConfirmation({
-                fn: upvote,
-                r,
-                isChangingVote: alreadyVoted,
+                fn: () => upvote({ r, isChangingVote: alreadyVoted }),
+                type: "upvote",
               })
             }
             icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
@@ -62,9 +59,8 @@ const verificationColumn = ({ upvote, downvote }) => ({
             disabled={alreadyVoted && alreadyVoted?.downvoted}
             onClick={() =>
               showVoteConfirmation({
-                fn: downvote,
-                r,
-                isChangingVote: alreadyVoted,
+                fn: () => downvote({ r, isChangingVote: alreadyVoted }),
+                type: "downvote",
               })
             }
             icon={
