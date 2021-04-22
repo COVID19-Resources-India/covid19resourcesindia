@@ -1,8 +1,13 @@
 const buildColumns = (c) =>
-  c.map((i) => ({
+  c.map((i) => (i !== "Link" ? {
     title: i,
     dataIndex: i,
     key: i,
+  }: {
+    title: i,
+    dataIndex: i,
+    key: i,
+    render: (link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>
   }))
 
 const DEFAULT_COLUMNS = ["State", "Distributor Name", "Telephone", "Address"]
