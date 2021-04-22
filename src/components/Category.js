@@ -74,9 +74,11 @@ const CategoryComponent = ({ category, stateContext }) => {
         })
 
         let updatedColumns = columns
+        .map(i => i.key === "Link" ? {...i, render: (link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>} : i )
+        
         if (!isExternalResources) {
           updatedColumns = [
-            ...columns,
+            ...updatedColumns,
             verificationColumn({
               upvote: upvoteFn,
               downvote: downvoteFn,
