@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 // hooks
 import { useContext } from "react"
@@ -49,67 +50,50 @@ const ResourceBlock = ({ title, resource }) => {
   )
 }
 
-const LatestUpdates = () => {
+const LatestUpdates = ({ latestUpdates, loading }) => {
   return (
     <div className="latest-updates resource">
       <h3>Latest Updates</h3>
       <div className="content">
-        <a
-          className="item"
-          href="https://static.mygov.in/rest/s3fs-public/mygov_161848046251307401.pdf"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <PDFIcon />
-          <span>Decision on CBSE Board Exams</span>
-        </a>
-        <a
-          className="item"
-          href="https://drive.google.com/file/d/1BtHPekCyfwONH1dMKjNpCYkqGJFtQjSW/view?usp=sharing"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <PDFIcon />
-          <span>Maharashtra: Break the Chain (21 Apr) - Official Order</span>
-        </a>
+        {loading && <Loader />}
+        {latestUpdates &&
+          latestUpdates.length > 0 &&
+          latestUpdates.map((i, idx) => (
+            <a
+              key={idx}
+              className="item"
+              href={i.Link}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <PDFIcon />
+              <span>{i.Text}</span>
+            </a>
+          ))}
       </div>
     </div>
   )
 }
 
-const Documents = () => (
+const Documents = ({ documents, loading }) => (
   <div className="documents resource">
     <h3>Helpful Guidelines &amp; Official Documents</h3>
     <div className="content">
-      <a
-        className="item"
-        href="https://www.mohfw.gov.in/pdf/Algorithmforinternationalarrivals.pdf"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <PDFIcon />
-        <span>
-          Algorithm: Standard Operating Procedure for International Arrivals
-        </span>
-      </a>
-      <a
-        className="item"
-        href="https://www.mohfw.gov.in/pdf/Guidelinesforinternationalarrivals17022021.pdf"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <PDFIcon />
-        <span>Guidelines for International Arrivals</span>
-      </a>
-      <a
-        className="item"
-        href="https://www.mohfw.gov.in/pdf/FAQCoWINforcitizens.pdf"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <PDFIcon />
-        <span>Frequently Asked Questions on Co-WIN (COVID-19 Vaccination)</span>
-      </a>
+      {loading && <Loader />}
+      {documents &&
+        documents.length > 0 &&
+        documents.map((i, idx) => (
+          <a
+            key={idx}
+            className="item"
+            href={i.Link}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <PDFIcon />
+            <span>{i.Text}</span>
+          </a>
+        ))}
     </div>
   </div>
 )
@@ -139,12 +123,8 @@ const EmergencyResources = ({ heading, filterBy }) => {
     }
   }
 
-  if (loading) {
-    return <Loader />
-  }
-  if (error) {
-    return <p>An error occurred...</p>
-  }
+  if (loading) return <Loader />
+  if (error) return <p>An error occurred...</p>
 
   if (dataSource.length > 0) {
     return (
@@ -166,6 +146,46 @@ const EmergencyResources = ({ heading, filterBy }) => {
   return null
 }
 
+const GuidelineAndUpdates = () => {
+  const [loading, setLoading] = useState(true)
+  const [latestUpdates, setLatestUpdates] = useState(null)
+  const [documents, setDocuments] = useState(null)
+
+  useEffect(() => {
+    if (!latestUpdates && !documents) {
+      setLoading(true)
+      // only fetch once
+      db.ref(`${SPREADSHEET_KEY}/guidelines-and-updates`)
+        .orderByChild("State")
+        .equalTo("National")
+        .once("value")
+        .then((i) => {
+          const docs = i.val()
+          let l = [],
+            d = []
+          for (const k in docs) {
+            const doc = docs[k]
+            if (doc.Type === "Latest Update") {
+              l.push(doc)
+            } else {
+              d.push(doc)
+            }
+          }
+          setDocuments(d)
+          setLatestUpdates(l)
+          setLoading(false)
+        })
+    }
+  }, [documents, latestUpdates, setLoading, setDocuments, setLatestUpdates])
+
+  return (
+    <>
+      <Documents documents={documents} loading={loading} />
+      <LatestUpdates latestUpdates={latestUpdates} loading={loading} />
+    </>
+  )
+}
+
 const EmergencyInfo = () => {
   const { selectedState } = useContext(StateContext)
   return (
@@ -178,8 +198,7 @@ const EmergencyInfo = () => {
           />
         )}
         <EmergencyResources heading="National Resources" filterBy="National" />
-        <Documents />
-        <LatestUpdates />
+        <GuidelineAndUpdates />
       </div>
     </section>
   )
