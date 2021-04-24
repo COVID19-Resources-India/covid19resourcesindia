@@ -188,6 +188,7 @@ const Verification = ({
   // --> datasource should not never be out of sync with dataWithCounts
   useEffect(() => {
     if (dataSource) {
+      const sortOrder = ["upvote", null, "downvote"]
       // add verification counts in dataSource
       let withCounts = dataSource
         ?.map((i) => {
@@ -200,7 +201,21 @@ const Verification = ({
             lastVotedType: field?.lastVotedType ?? null,
           }
         })
-        .sort((a, b) => b.lastVoted - a.lastVoted)
+        .sort((a, b) => {
+          // upvoted show on top of the list, then non-voted
+          // downvoted show at the end of the list
+          if (a.lastVotedType === b.lastVotedType) {
+            // If the elements both have the same `type`,
+            return b.lastVoted - a.lastVoted // Compare by last voted time
+          } else {
+            // Otherwise,
+            return (
+              sortOrder.indexOf(a.lastVotedType) -
+              sortOrder.indexOf(b.lastVotedType)
+            ) // Substract indexes, If element `a` comes first in the array,
+            // the returned value will be negative, resulting in it being sorted before `b`, and vice versa.
+          }
+        })
       setDataWithCounts(withCounts)
     } else {
       setDataWithCounts([])
