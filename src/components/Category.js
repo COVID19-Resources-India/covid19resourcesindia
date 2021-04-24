@@ -1,5 +1,5 @@
 // hooks
-import { useContext } from "react"
+import { Fragment, useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
@@ -22,6 +22,7 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
+import TwitterSearch from "./TwitterSearch"
 
 const CategoryComponent = ({ category, stateContext }) => {
   const { selectedState } = stateContext
@@ -79,12 +80,15 @@ const CategoryComponent = ({ category, stateContext }) => {
         }
 
         return (
-          <Table
-            columns={updatedColumns}
-            dataSource={dataWithCounts}
-            loading={loading}
-            resetSearch={isExternalResources}
-          />
+          <Fragment>
+            <TwitterSearch stateContext={stateContext} category={category} />
+            <Table
+              columns={updatedColumns}
+              dataSource={dataWithCounts}
+              loading={loading}
+              resetSearch={isExternalResources}
+            />
+          </Fragment>
         )
       }}
     </Verification>
