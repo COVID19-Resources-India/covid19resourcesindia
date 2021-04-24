@@ -16,6 +16,7 @@ import { toKebabCase } from "utils/caseHelper"
 // stlyes
 import "./Verification.scss"
 import confirm from "antd/lib/modal/confirm"
+import { useFirebaseOnceHook } from "utils/hooksHelper"
 
 const VERIFICATION_COUNT_NODE =
   process.env.NODE_ENV === "development"
@@ -101,50 +102,20 @@ const Verification = ({
     ? cella.get({ key: "votes" })
     : {}
   // fetch all by default
-  let refToUse = db.ref(`${VERIFICATION_COUNT_NODE}/${category}`)
+  let dbRef = db.ref(`${VERIFICATION_COUNT_NODE}/${category}`)
   // if state is selected in the context (from the header)
   // filter based on state
   if (selectedState) {
-    refToUse = db.ref(
+    dbRef = db.ref(
       `${VERIFICATION_COUNT_NODE}/${category}/${toKebabCase(selectedState)}`
     )
   }
-  const [fetchedVerificationCounts, setFetchedVerificationCounts] = useState(
-    undefined
-  )
+
   const [dataWithCounts, setDataWithCounts] = useState(undefined)
-  const [loading, setLoading] = useState(false)
-
-  const refetchVerification = useCallback(() => {
-    setLoading(true)
-    return refToUse.once("value").then((s) => {
-      // console.log("* fetched verificationCounts")
-      const counts = s.val()
-      setFetchedVerificationCounts(counts)
-      setLoading(false)
-    })
-  }, [refToUse, setFetchedVerificationCounts])
-
-  // Only fetch counts once instead of keeping a watcher
-  // we already have too many watchers and might affect reach the firebase limits
-  // if we keep this also live
-  useEffect(() => {
-    if (!loading && fetchedVerificationCounts === undefined) {
-      // console.log("initial fetch verificationcounts")
-      refetchVerification()
-    }
-  }, [refetchVerification, fetchedVerificationCounts, loading])
-
-  // refetch counts if category / selected state changes
-  // required because this component does not unmount
-  useEffect(() => {
-    if (shouldRefetchData) {
-      // console.log("refetch verificationCounts")
-      // set just voted to false so the list can get sorted
-      // (when category / state changes)
-      refetchVerification()
-    }
-  }, [shouldRefetchData, refetchVerification])
+  const { dataObj: fetchedVerificationCounts } = useFirebaseOnceHook(
+    dbRef,
+    shouldRefetchData
+  )
 
   // Update db and update dataWithCounts
   // dataWithCounts automatically updates and sorts based on vote count
@@ -183,9 +154,9 @@ const Verification = ({
     })
   }
 
-  // merge and create data with counts if verificationCounts or dataSource changes
+  // merge and create dataWithCounts if verificationCounts or dataSource changes
   // required to be seperate from refetchVerification
-  // --> datasource should not never be out of sync with dataWithCounts
+  // --> dataSource should not never be out of sync with dataWithCounts
   useEffect(() => {
     if (dataSource) {
       const sortOrder = ["upvote", null, "downvote"]

@@ -10,7 +10,7 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 import { StateContext } from "context/StateContext"
 // helper
 import { toTitleCase } from "utils/caseHelper"
-import { usePrevious } from "utils/hooksHelper"
+import { usePrevious, useFirebaseOnceHook } from "utils/hooksHelper"
 import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
@@ -39,42 +39,16 @@ const CategoryComponent = ({ category, stateContext }) => {
       .equalTo(selectedState)
   }
 
-  const [loading, setLoading] = useState(false)
-  const [dataSource, setDataSource] = useState(null)
-
   const prevCategory = usePrevious(category)
   const prevSelectedState = usePrevious(selectedState)
   const shouldRefetchData =
     (prevCategory !== undefined && prevCategory !== category) ||
     (prevSelectedState !== undefined && prevSelectedState !== selectedState)
 
-  const fetchData = useCallback(() => {
-    setLoading(true)
-    dbRef.once("value").then((s) => {
-      // console.log("* fetched data")
-      if (s.val()) {
-        setDataSource(Object.values(s.val()))
-      } else {
-        setDataSource([])
-      }
-      setLoading(false)
-    })
-  }, [dbRef])
-
-  // init fetch
-  useEffect(() => {
-    if (dataSource === null && !loading) {
-      // console.log("initial fetch data")
-      fetchData()
-    }
-  }, [loading, dataSource, fetchData])
-  // refetch data if category / selected state changes
-  useEffect(() => {
-    if (shouldRefetchData) {
-      // console.log("refetch data")
-      fetchData()
-    }
-  }, [shouldRefetchData, fetchData])
+  const { data: dataSource, loading } = useFirebaseOnceHook(
+    dbRef,
+    shouldRefetchData
+  )
 
   const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
