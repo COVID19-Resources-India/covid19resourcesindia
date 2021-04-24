@@ -1,5 +1,5 @@
 // hooks
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
@@ -11,10 +11,9 @@ import { StateContext } from "context/StateContext"
 // helper
 import { toTitleCase } from "utils/caseHelper"
 import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
-import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
-import Verification from "components/Verification"
+import { Verification, verificationColumn } from "components/Verification"
 // styles
 import Table from "components/Table"
 // columns
