@@ -93,6 +93,7 @@ const verificationColumn = ({ upvote, downvote }) => ({
 const Verification = ({
   category,
   children,
+  dataSource,
   selectedState,
   shouldRefetchData,
 }) => {
@@ -136,6 +137,8 @@ const Verification = ({
   useEffect(() => {
     if (shouldRefetchData) {
       // console.log("refetch verificationCounts")
+      // set just voted to false so the list can get sorted
+      // (when category / state changes)
       refetchVerification()
     }
   }, [shouldRefetchData, refetchVerification])
@@ -232,7 +235,23 @@ const Verification = ({
     })
   }
 
-  return <>{children({ downvoteFn, upvoteFn, verificationCounts })}</>
+  // add verification counts in dataSource
+  let dataWithCounts = dataSource?.map((i) => {
+    let field = verificationCounts?.[i.key]
+    // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+    if (!selectedState) {
+      field = verificationCounts?.[toKebabCase(i.State)]?.[i.key]
+    }
+    return {
+      ...i,
+      upvote: field?.upvote ?? 0,
+      downvote: field?.downvote ?? 0,
+      lastVoted: field?.lastVoted ?? null,
+      lastVotedType: field?.lastVotedType ?? null,
+    }
+  })
+
+  return <>{children({ downvoteFn, upvoteFn, dataWithCounts })}</>
 }
 
 export default Verification
