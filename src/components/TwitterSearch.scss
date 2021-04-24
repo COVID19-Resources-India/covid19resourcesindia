@@ -1,0 +1,19 @@
+@import "common/styles/_base.scss";
+
+.search-twitter-button {
+  display: flex;
+  margin: 0 auto;
+  margin-bottom: 56px;
+}
+
+.info-container {
+  display: flex;
+  margin: 20px 0;
+  .info-label {
+    margin: 0 10px;
+    min-width: 70px;
+  }
+  .info-input {
+    margin: 0 10px;
+  }
+}
