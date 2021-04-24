@@ -1,5 +1,5 @@
 // hooks
-import { useContext, useEffect, useState } from "react"
+import { Fragment, useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
 // antd
@@ -23,6 +23,7 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
+import TwitterSearch from "./TwitterSearch"
 
 const CategoryComponent = ({ category, stateContext }) => {
   const { selectedState } = stateContext
@@ -74,7 +75,7 @@ const CategoryComponent = ({ category, stateContext }) => {
         })
 
         let updatedColumns = columns
-        
+
         if (!isExternalResources) {
           updatedColumns = [
             ...columns,
@@ -86,13 +87,16 @@ const CategoryComponent = ({ category, stateContext }) => {
         }
 
         return (
-          <Table
-            columns={updatedColumns}
-            dataSource={dataWithCounts}
-            loading={loading}
-            error={error}
-            resetSearch={isExternalResources}
-          />
+          <Fragment>
+            <TwitterSearch stateContext={stateContext}  category={category} />
+            <Table
+              columns={updatedColumns}
+              dataSource={dataWithCounts}
+              loading={loading}
+              error={error}
+              resetSearch={isExternalResources}
+            />
+          </Fragment>
         )
       }}
     </Verification>
