@@ -1,3 +1,4 @@
 import { verificationColumn } from "./verificationColumn"
-export { verificationColumn }
-export { default as Verification } from "./Verification"
+import Verification from "./Verification"
+
+export { verificationColumn, Verification }
