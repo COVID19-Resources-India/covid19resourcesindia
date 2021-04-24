@@ -54,6 +54,11 @@ const TwitterSearch = ({ category }) => {
 
   return (
     <>
+      <p className="twitter-disclaimer">
+        It is possible that the numbers in the list below may not have the
+        required resources due to high demand. For real time updates you can use
+        Twitter using the below button.
+      </p>
       <div className="search-twitter-button-container">
         <Button
           className="search-twitter-button"
