@@ -1,7 +1,6 @@
 // hooks
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
-import { useList } from "react-firebase-hooks/database"
 // antd
 import { Result, Button } from "antd"
 // constants
@@ -11,6 +10,7 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 import { StateContext } from "context/StateContext"
 // helper
 import { toKebabCase, toTitleCase } from "utils/caseHelper"
+import { usePrevious } from "utils/hooksHelper"
 import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
@@ -39,11 +39,42 @@ const CategoryComponent = ({ category, stateContext }) => {
       .equalTo(selectedState)
   }
 
-  const [snapshots, loading, error] = useList(dbRef)
-  const [dataSource, setDataSource] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [dataSource, setDataSource] = useState(null)
+
+  const prevCategory = usePrevious(category)
+  const prevSelectedState = usePrevious(selectedState)
+  const shouldRefetchData =
+    (prevCategory !== undefined && prevCategory !== category) ||
+    (prevSelectedState !== undefined && prevSelectedState !== selectedState)
+
+  const fetchData = useCallback(() => {
+    setLoading(true)
+    dbRef.once("value").then((s) => {
+      // console.log("* fetched data")
+      if (s.val()) {
+        setDataSource(Object.values(s.val()))
+      } else {
+        setDataSource([])
+      }
+      setLoading(false)
+    })
+  }, [dbRef])
+
+  // init fetch
   useEffect(() => {
-    setDataSource(snapshots.map((i) => i.val()))
-  }, [snapshots])
+    if (dataSource === null && !loading) {
+      // console.log("initial fetch data")
+      fetchData()
+    }
+  }, [loading, dataSource, fetchData])
+  // refetch data if category / selected state changes
+  useEffect(() => {
+    if (shouldRefetchData) {
+      // console.log("refetch data")
+      fetchData()
+    }
+  }, [shouldRefetchData, fetchData])
 
   const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
@@ -54,11 +85,15 @@ const CategoryComponent = ({ category, stateContext }) => {
       : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
-    <Verification selectedState={selectedState} category={category}>
+    <Verification
+      selectedState={selectedState}
+      category={category}
+      shouldRefetchData={shouldRefetchData}
+    >
       {(verificationProps) => {
         const { downvoteFn, upvoteFn, verificationCounts } = verificationProps
         // add verification counts in dataSource
-        const dataWithCounts = dataSource.map((i) => {
+        const dataWithCounts = dataSource?.map((i) => {
           let field = verificationCounts?.[i.key]
           // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
           if (!selectedState) {
@@ -74,7 +109,7 @@ const CategoryComponent = ({ category, stateContext }) => {
         })
 
         let updatedColumns = columns
-        
+
         if (!isExternalResources) {
           updatedColumns = [
             ...columns,
@@ -90,7 +125,6 @@ const CategoryComponent = ({ category, stateContext }) => {
             columns={updatedColumns}
             dataSource={dataWithCounts}
             loading={loading}
-            error={error}
             resetSearch={isExternalResources}
           />
         )

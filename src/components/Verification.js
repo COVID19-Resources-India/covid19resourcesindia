@@ -13,12 +13,14 @@ import firebase, { db } from "constant/firebase"
 // utils
 import cella from "utils/cella"
 import { toKebabCase } from "utils/caseHelper"
-import { usePrevious } from "utils/hooksHelper"
 // stlyes
 import "./Verification.scss"
 import confirm from "antd/lib/modal/confirm"
 
-const VERIFICATION_COUNT_NODE = "verificationCounts"
+const VERIFICATION_COUNT_NODE =
+  process.env.NODE_ENV === "development"
+    ? "verificationCountsDev"
+    : "verificationCounts"
 
 const showVoteConfirmation = ({ fn, type }) => {
   confirm({
@@ -88,7 +90,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
   },
 })
 
-const Verification = ({ category, children, selectedState }) => {
+const Verification = ({
+  category,
+  children,
+  selectedState,
+  shouldRefetchData,
+}) => {
   const localStorageCounts = localStorage.getItem("votes")
     ? cella.get({ key: "votes" })
     : {}
@@ -102,11 +109,15 @@ const Verification = ({ category, children, selectedState }) => {
     )
   }
   const [verificationCounts, setVerificationCounts] = useState(undefined)
+  const [loading, setLoading] = useState(false)
 
   const refetchVerification = useCallback(() => {
+    setLoading(true)
     return refToUse.once("value").then((s) => {
+      // console.log("* fetched verificationCounts")
       const counts = s.val()
       setVerificationCounts(counts)
+      setLoading(false)
     })
   }, [refToUse, setVerificationCounts])
 
@@ -114,27 +125,20 @@ const Verification = ({ category, children, selectedState }) => {
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
-    if (verificationCounts === undefined) {
+    if (!loading && verificationCounts === undefined) {
+      // console.log("initial fetch verificationcounts")
       refetchVerification()
     }
-  }, [refetchVerification, verificationCounts])
-
-  const prevCategory = usePrevious(category)
-  const prevSelectedState = usePrevious(selectedState)
+  }, [refetchVerification, verificationCounts, loading])
 
   // refetch counts if category / selected state changes
   // required because this component does not unmount
   useEffect(() => {
-    if (prevCategory !== category || prevSelectedState !== selectedState) {
+    if (shouldRefetchData) {
+      // console.log("refetch verificationCounts")
       refetchVerification()
     }
-  }, [
-    prevCategory,
-    prevSelectedState,
-    category,
-    selectedState,
-    refetchVerification,
-  ])
+  }, [shouldRefetchData, refetchVerification])
 
   // Update db and add to local verificationCounts
   const vote = ({ r, ref, counts, type }) => {
