@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
 import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
 import MobileMenu from "components/MobileMenu"
@@ -7,6 +7,59 @@ import StateSelector from "components/StateSelector"
 import _ from "lodash"
 
 import "./Header.scss"
+
+const HEADER_SITE_TEXT = (
+  <>
+    COVID-19 Resources<span>India</span>
+  </>
+)
+
+const menuLinks = [
+  { link: "https://forms.gle/rrbpk9SzGFmxbFpX9", text: "Submit Information" },
+  { link: "https://bit.ly/32vqT5O", text: "Volunteer" },
+]
+
+const LinkComponent = ({ isInternal = false, text, link }) => {
+  if (isInternal) {
+    return (
+      <NavLink to={link} className="item">
+        {text}
+      </NavLink>
+    )
+  }
+  return (
+    <a key={text} href={link} target="_blank" rel="noreferrer" className="item">
+      {text}
+    </a>
+  )
+}
+
+const MenuLinks = () => {
+  return menuLinks.map((i) => <LinkComponent key={i.text} {...i} />)
+}
+
+const SocialIconsMenu = () => {
+  return (
+    <>
+      <a
+        href="https://t.me/covid19resourcesindia"
+        className="item"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <TelegramIcon />
+      </a>
+      <a
+        href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
+        className="item"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <GithubIcon />
+      </a>
+    </>
+  )
+}
 
 export default function Header() {
   const [isSticky, setIsSticky] = useState(false)
@@ -27,44 +80,16 @@ export default function Header() {
       <div className="wrapper">
         <StateSelector />
         <Link to="/" className="logo">
-          COVID-19 Resources<span>India</span>
+          {HEADER_SITE_TEXT}
         </Link>
         <nav className="navigation">
-          <a
-            href="https://forms.gle/rrbpk9SzGFmxbFpX9"
-            target="_blank"
-            rel="noreferrer"
-            className="item"
-          >
-            Submit Information
-          </a>
-          <a
-            href="https://bit.ly/32vqT5O"
-            target="_blank"
-            rel="noreferrer"
-            className="item"
-          >
-            Volunteer
-          </a>
-          <a
-            href="https://t.me/covid19resourcesindia"
-            className="item"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <TelegramIcon />
-          </a>
-          <a
-            href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
-            className="item"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <GithubIcon />
-          </a>
+          <MenuLinks />
+          <SocialIconsMenu />
         </nav>
         <MobileMenu />
       </div>
     </header>
   )
 }
+
+export { MenuLinks, SocialIconsMenu, HEADER_SITE_TEXT }
