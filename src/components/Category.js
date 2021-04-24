@@ -1,9 +1,5 @@
 // hooks
-<<<<<<< HEAD
-import { Fragment, useContext, useEffect, useState } from "react"
-=======
-import { useContext } from "react"
->>>>>>> origin/develop
+import { Fragment, useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
@@ -85,7 +81,7 @@ const CategoryComponent = ({ category, stateContext }) => {
 
         return (
           <Fragment>
-            <TwitterSearch stateContext={stateContext}  category={category} />
+            <TwitterSearch stateContext={stateContext} category={category} />
             <Table
               columns={updatedColumns}
               dataSource={dataWithCounts}
