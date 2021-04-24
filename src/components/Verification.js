@@ -109,7 +109,10 @@ const Verification = ({
       `${VERIFICATION_COUNT_NODE}/${category}/${toKebabCase(selectedState)}`
     )
   }
-  const [verificationCounts, setVerificationCounts] = useState(undefined)
+  const [fetchedVerificationCounts, setFetchedVerificationCounts] = useState(
+    undefined
+  )
+  const [dataWithCounts, setDataWithCounts] = useState(undefined)
   const [loading, setLoading] = useState(false)
 
   const refetchVerification = useCallback(() => {
@@ -117,20 +120,20 @@ const Verification = ({
     return refToUse.once("value").then((s) => {
       // console.log("* fetched verificationCounts")
       const counts = s.val()
-      setVerificationCounts(counts)
+      setFetchedVerificationCounts(counts)
       setLoading(false)
     })
-  }, [refToUse, setVerificationCounts])
+  }, [refToUse, setFetchedVerificationCounts])
 
   // Only fetch counts once instead of keeping a watcher
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
-    if (!loading && verificationCounts === undefined) {
+    if (!loading && fetchedVerificationCounts === undefined) {
       // console.log("initial fetch verificationcounts")
       refetchVerification()
     }
-  }, [refetchVerification, verificationCounts, loading])
+  }, [refetchVerification, fetchedVerificationCounts, loading])
 
   // refetch counts if category / selected state changes
   // required because this component does not unmount
@@ -143,32 +146,28 @@ const Verification = ({
     }
   }, [shouldRefetchData, refetchVerification])
 
-  // Update db and add to local verificationCounts
+  // Update db and update dataWithCounts
+  // dataWithCounts automatically updates and sorts based on vote count
+  // if the data source / verification counts are updated
   const vote = ({ r, ref, counts, type }) => {
-    const state = toKebabCase(r.State)
-
     // update timestamp
     db.ref(ref).child("lastVoted").set(firebase.database.ServerValue.TIMESTAMP)
     db.ref(ref).child("lastVotedType").set(type)
 
     // update local verification counts
-    setVerificationCounts((prev) => {
-      const common = {
-        [r.key]: { ...counts, lastVoted: new Date(), lastVotedType: type },
-      }
-      if (!selectedState) {
-        return {
-          ...prev,
-          [state]: {
-            ...prev?.[state],
-            ...common,
-          },
+    setDataWithCounts((prev) => {
+      const common = { ...counts, lastVoted: new Date(), lastVotedType: type }
+      const newDataWithCounts = []
+
+      for (const i in prev) {
+        const dataRow = prev[i]
+        if (dataRow.key === r.key) {
+          newDataWithCounts.push({ ...dataRow, ...common })
+        } else {
+          newDataWithCounts.push(dataRow)
         }
       }
-      return {
-        ...prev,
-        ...common,
-      }
+      return newDataWithCounts
     })
 
     // update local storage to note if user has already voted for an idUgh.
@@ -183,6 +182,30 @@ const Verification = ({
       },
     })
   }
+
+  // merge and create data with counts if verificationCounts or dataSource changes
+  // required to be seperate from refetchVerification
+  // --> datasource should not never be out of sync with dataWithCounts
+  useEffect(() => {
+    if (dataSource) {
+      // add verification counts in dataSource
+      let withCounts = dataSource
+        ?.map((i) => {
+          let field = fetchedVerificationCounts?.[i.key]
+          return {
+            ...i,
+            upvote: field?.upvote ?? 0,
+            downvote: field?.downvote ?? 0,
+            lastVoted: field?.lastVoted ?? null,
+            lastVotedType: field?.lastVotedType ?? null,
+          }
+        })
+        .sort((a, b) => b.lastVoted - a.lastVoted)
+      setDataWithCounts(withCounts)
+    } else {
+      setDataWithCounts([])
+    }
+  }, [dataSource, fetchedVerificationCounts])
 
   const upvoteFn = ({ r, isChangingVote = false }) => {
     const state = toKebabCase(r.State)
@@ -234,22 +257,6 @@ const Verification = ({
       type: "downvote",
     })
   }
-
-  // add verification counts in dataSource
-  let dataWithCounts = dataSource?.map((i) => {
-    let field = verificationCounts?.[i.key]
-    // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
-    if (!selectedState) {
-      field = verificationCounts?.[toKebabCase(i.State)]?.[i.key]
-    }
-    return {
-      ...i,
-      upvote: field?.upvote ?? 0,
-      downvote: field?.downvote ?? 0,
-      lastVoted: field?.lastVoted ?? null,
-      lastVotedType: field?.lastVotedType ?? null,
-    }
-  })
 
   return <>{children({ downvoteFn, upvoteFn, dataWithCounts })}</>
 }
