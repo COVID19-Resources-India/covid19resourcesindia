@@ -27,7 +27,7 @@ const buildColumns = (c) =>
                 trimmedNumber
               )
               if (index !== 0 && valueToBeReturned)
-                valueToBeReturned = " / " + valueToBeReturned
+                valueToBeReturned = <span> / {valueToBeReturned}</span>
               return valueToBeReturned
             })
           }
