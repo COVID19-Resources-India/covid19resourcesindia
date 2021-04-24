@@ -1,14 +1,20 @@
 import { useState } from "react"
+// antd
 import { Button, Input } from "antd"
 import Modal from "antd/lib/modal/Modal"
+// constant
 import {
   TWITTER_DEFAULT_SEARCH_KEY,
   TWITTER_SEARCH_KEYS,
   TWITTER_SUBTRACT_SEARCH,
   TWITTER_VERIFIED_SEARCH,
 } from "constant/static"
-import "./TwitterSearch.scss"
+// helper
 import { toTitleCase } from "utils/caseHelper"
+// icons
+import { ReactComponent as TwitterIcon } from "assets/icons/twitter.svg"
+// styles
+import "./TwitterSearch.scss"
 
 const mapCategoryToTwitterCategory = (category) =>
   TWITTER_SEARCH_KEYS[category] || TWITTER_DEFAULT_SEARCH_KEY
@@ -48,13 +54,16 @@ const TwitterSearch = ({ category }) => {
 
   return (
     <>
-      <Button
-        className="search-twitter-button"
-        type="primary"
-        onClick={showModal}
-      >
-        Search verified resources on Twitter
-      </Button>
+      <div className="search-twitter-button-container">
+        <Button
+          className="search-twitter-button"
+          type="primary"
+          icon={<TwitterIcon />}
+          onClick={showModal}
+        >
+          Search verified resources on Twitter
+        </Button>
+      </div>
       <Modal
         title="Search on Twitter"
         visible={isModalVisible}
