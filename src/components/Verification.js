@@ -16,7 +16,7 @@ import { toKebabCase } from "utils/caseHelper"
 // stlyes
 import "./Verification.scss"
 import confirm from "antd/lib/modal/confirm"
-import { useFirebaseOnceHook } from "utils/hooksHelper"
+import { useFirebaseOnce } from "utils/hooksHelper"
 
 const VERIFICATION_COUNT_NODE =
   process.env.NODE_ENV === "development"
@@ -112,7 +112,7 @@ const Verification = ({
   }
 
   const [dataWithCounts, setDataWithCounts] = useState(undefined)
-  const { dataObj: fetchedVerificationCounts } = useFirebaseOnceHook(
+  const { dataObj: fetchedVerificationCounts } = useFirebaseOnce(
     dbRef,
     shouldRefetchData
   )

@@ -20,7 +20,7 @@ function usePrevious(value) {
  *   loading: Boolean
  * }
  */
-function useFirebaseOnceHook(dbRef, shouldRefetchData) {
+function useFirebaseOnce(dbRef, shouldRefetchData) {
   const [data, setData] = useState(undefined)
   const [dataObj, setDataObj] = useState(undefined)
   const [loading, setLoading] = useState(false)
@@ -62,4 +62,4 @@ function useFirebaseOnceHook(dbRef, shouldRefetchData) {
   return { data, dataObj, loading }
 }
 
-export { usePrevious, useFirebaseOnceHook }
+export { usePrevious, useFirebaseOnce }

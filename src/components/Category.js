@@ -10,7 +10,7 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 import { StateContext } from "context/StateContext"
 // helper
 import { toTitleCase } from "utils/caseHelper"
-import { usePrevious, useFirebaseOnceHook } from "utils/hooksHelper"
+import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
 import { verificationColumn } from "components/Verification"
 // components
 import Loader from "components/Loader"
@@ -45,7 +45,7 @@ const CategoryComponent = ({ category, stateContext }) => {
     (prevCategory !== undefined && prevCategory !== category) ||
     (prevSelectedState !== undefined && prevSelectedState !== selectedState)
 
-  const { data: dataSource, loading } = useFirebaseOnceHook(
+  const { data: dataSource, loading } = useFirebaseOnce(
     dbRef,
     shouldRefetchData
   )
