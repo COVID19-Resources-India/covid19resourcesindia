@@ -18,7 +18,10 @@ import { usePrevious } from "utils/hooksHelper"
 import "./Verification.scss"
 import confirm from "antd/lib/modal/confirm"
 
-const VERIFICATION_COUNT_NODE = "verificationCounts"
+const VERIFICATION_COUNT_NODE =
+process.env.NODE_ENV === "development"
+    ? "verificationCountsDev"
+    : "verificationCounts"
 
 const showVoteConfirmation = ({ fn, type }) => {
   confirm({
