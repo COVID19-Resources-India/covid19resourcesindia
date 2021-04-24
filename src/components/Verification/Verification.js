@@ -50,6 +50,10 @@ const Verification = ({
       let withCounts = dataSource
         ?.map((i) => {
           let field = fetchedVerificationCounts?.[i.key]
+          // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+          if (!selectedState) {
+            field = fetchedVerificationCounts?.[toKebabCase(i.State)]?.[i.key]
+          }
           return {
             ...i,
             upvote: field?.upvote ?? 0,
@@ -74,7 +78,7 @@ const Verification = ({
     } else {
       setDataWithCounts([])
     }
-  }, [dataSource, fetchedVerificationCounts])
+  }, [dataSource, selectedState, fetchedVerificationCounts])
 
   // Update db and update dataWithCounts
   // dataWithCounts automatically updates and sorts based on vote count
