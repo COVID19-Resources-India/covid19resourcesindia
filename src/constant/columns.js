@@ -1,13 +1,48 @@
+import { isValidNumber } from "utils/validation"
+
 const buildColumns = (c) =>
-  c.map((i) => (i !== "Link" ? {
+  c.map((i) => ({
     title: i,
     dataIndex: i,
     key: i,
-  }: {
-    title: i,
-    dataIndex: i,
-    key: i,
-    render: (link) => <a href={link} target="_blank" rel="noreferrer">{link}</a>
+    render: (item) => {
+      const trimmedItem = item ? item.toString().trim() : ""
+      switch (i) {
+        case "Link":
+          return trimmedItem ? (
+            <a href={trimmedItem} target="_blank" rel="noreferrer">
+              {trimmedItem}
+            </a>
+          ) : (
+            trimmedItem
+          )
+        case "Telephone": {
+          const numbers = trimmedItem ? trimmedItem.split("/") : ""
+          if (numbers.length) {
+            return numbers.map((number, index) => {
+              const trimmedNumber = number.trim()
+              let valueToBeReturned = isValidNumber(trimmedNumber) ? (
+                <a href={`tel:${trimmedNumber}`}>{trimmedNumber}</a>
+              ) : (
+                trimmedNumber
+              )
+              if (index !== 0 && valueToBeReturned)
+                valueToBeReturned = " / " + valueToBeReturned
+              return valueToBeReturned
+            })
+          }
+          return numbers
+        }
+        case "E-Mail Address":
+          return trimmedItem ? (
+            <a href={`mailto:${trimmedItem}`}>{trimmedItem}</a>
+          ) : (
+            trimmedItem
+          )
+        default:
+          return trimmedItem
+      }
+    },
   }))
 
 const DEFAULT_COLUMNS = ["State", "Distributor Name", "Telephone", "Address"]
