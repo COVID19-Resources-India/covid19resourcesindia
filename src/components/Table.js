@@ -22,8 +22,9 @@ const Table = ({
   const [searchedValue, setSearchedValue] = useState("")
   const [filteredData, setFilteredData] = useState([])
 
+  // Search Function
   useEffect(() => {
-    const newFilteredData = dataSource.filter((entry) => {
+    const newFilteredData = dataSource?.filter((entry) => {
       // Creating new object as the key can be deleted only in new object otherwise it'll delete from reference
       const newEntry = { ...entry }
       // Removing key from search
@@ -43,7 +44,7 @@ const Table = ({
     if (resetSearch) {
       setSearchedValue("")
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSource])
 
   const onSearchChange = (e) => setSearchedValue(e.target.value)

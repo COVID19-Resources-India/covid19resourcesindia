@@ -1,12 +1,13 @@
 import React from "react"
 import { Drawer, Button } from "antd"
-import { Link, NavLink } from "react-router-dom"
-import "./MobileMenu.scss"
+import { Link } from "react-router-dom"
 // icons
 import { ReactComponent as HamburgerIcon } from "assets/icons/hamburger.svg"
 import { ReactComponent as CloseIcon } from "assets/icons/close.svg"
-import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
-import { ReactComponent as GithubIcon } from "assets/icons/github.svg"
+// styles
+import "./MobileMenu.scss"
+// components
+import { HEADER_SITE_TEXT, MenuLinks, SocialIconsMenu } from "./Header"
 
 class MobileMenu extends React.Component {
   state = { visible: false }
@@ -48,33 +49,13 @@ class MobileMenu extends React.Component {
         >
           <div className="mobile-menu-content">
             <Link to="/" className="logo">
-              COVID-19 Resources<span>India</span>
+              {HEADER_SITE_TEXT}
             </Link>
             <div className="navigation">
-              <NavLink to="/contribute" className="item">
-                Contribute
-              </NavLink>
-              <NavLink to="/issue" className="item">
-                Report an Issue
-              </NavLink>
+              <MenuLinks />
             </div>
             <div className="navigation-icons">
-              <a
-                href="https://t.me/covid19resourcesindia"
-                className="item"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <TelegramIcon />
-              </a>
-              <a
-                href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
-                className="item"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <GithubIcon />
-              </a>
+              <SocialIconsMenu />
             </div>
           </div>
         </Drawer>
