@@ -44,7 +44,7 @@ export default function Header() {
             rel="noreferrer"
             className="item"
           >
-            Contribute
+            Volunteer
           </a>
           <a
             href="https://t.me/covid19resourcesindia"

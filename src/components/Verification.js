@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 // modules
 import ReactTimeAgo from "react-time-ago"
 // antd
@@ -13,10 +13,19 @@ import firebase, { db } from "constant/firebase"
 // utils
 import cella from "utils/cella"
 import { toKebabCase } from "utils/caseHelper"
+import { usePrevious } from "utils/hooksHelper"
 // stlyes
 import "./Verification.scss"
+import confirm from "antd/lib/modal/confirm"
 
 const VERIFICATION_COUNT_NODE = "verificationCounts"
+
+const showVoteConfirmation = ({ fn, type }) => {
+  confirm({
+    title: `Are you sure you want to ${type} this?`,
+    onOk: fn,
+  })
+}
 
 const verificationColumn = ({ upvote, downvote }) => ({
   title: "Verified?",
@@ -36,7 +45,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button upvote"
             disabled={alreadyVoted && alreadyVoted?.upvoted}
-            onClick={() => upvote({ r, isChangingVote: alreadyVoted, index })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: () => upvote({ r, isChangingVote: alreadyVoted, index }),
+                type: "upvote",
+              })
+            }
             icon={alreadyVoted?.upvoted ? <UpvoteFilledIcon /> : <UpvoteIcon />}
           >
             {r.upvote}
@@ -44,7 +58,12 @@ const verificationColumn = ({ upvote, downvote }) => ({
           <Button
             className="vote-button downvote"
             disabled={alreadyVoted && alreadyVoted?.downvoted}
-            onClick={() => downvote({ r, isChangingVote: alreadyVoted, index })}
+            onClick={() =>
+              showVoteConfirmation({
+                fn: () => downvote({ r, isChangingVote: alreadyVoted, index }),
+                type: "downvote",
+              })
+            }
             icon={
               alreadyVoted?.downvoted ? (
                 <DownvoteFilledIcon />
@@ -87,35 +106,56 @@ const Verification = ({ category, children, selectedState, dataSource }) => {
   }
   const [dataWithCounts, setDataWithCounts] = useState([])
 
+  const refetchVerification = useCallback(() => {
+    refToUse.once("value").then((s) => {
+      const counts = s.val()
+      // add verification counts in dataSource
+      const newDataWithCounts = dataSource
+        .map((i) => {
+          let field = counts?.[i.key]
+          // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
+          if (!selectedState) {
+            field = counts?.[toKebabCase(i.State)]?.[i.key]
+          }
+          return {
+            ...i,
+            upvote: field?.upvote ?? 0,
+            downvote: field?.downvote ?? 0,
+            lastVoted: field?.lastVoted ?? null,
+            lastVotedType: field?.lastVotedType ?? null,
+          }
+        })
+        .sort((a, b) => b.lastVoted - a.lastVoted)
+
+      setDataWithCounts(newDataWithCounts)
+    })
+  }, [refToUse, dataSource, selectedState])
+
   // Only fetch counts once instead of keeping a watcher
   // we already have too many watchers and might affect reach the firebase limits
   // if we keep this also live
   useEffect(() => {
     if (!dataWithCounts.length && dataSource.length) {
-      refToUse.once("value").then((s) => {
-        const counts = s.val()
-        // add verification counts in dataSource
-        const dataWithCounts = dataSource
-          .map((i) => {
-            let field = counts?.[i.key]
-            // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
-            if (!selectedState) {
-              field = counts?.[toKebabCase(i.State)]?.[i.key]
-            }
-            return {
-              ...i,
-              upvote: field?.upvote ?? 0,
-              downvote: field?.downvote ?? 0,
-              lastVoted: field?.lastVoted ?? null,
-              lastVotedType: field?.lastVotedType ?? null,
-            }
-          })
-          .sort((a, b) => b.lastVoted - a.lastVoted)
-
-        setDataWithCounts(dataWithCounts)
-      })
+      refetchVerification()
     }
-  }, [refToUse, dataWithCounts, dataSource, selectedState])
+  }, [dataWithCounts, dataSource, refetchVerification])
+
+  const prevCategory = usePrevious(category)
+  const prevSelectedState = usePrevious(selectedState)
+
+  // refetch counts if category / selected state changes
+  // required because this component does not unmount
+  useEffect(() => {
+    if (prevCategory !== category || prevSelectedState !== selectedState) {
+      refetchVerification()
+    }
+  }, [
+    prevCategory,
+    prevSelectedState,
+    category,
+    selectedState,
+    refetchVerification,
+  ])
 
   // Update db and add to local dataWithCounts
   const vote = ({ r, ref, counts, type, index }) => {
@@ -125,14 +165,14 @@ const Verification = ({ category, children, selectedState, dataSource }) => {
 
     const common = { ...counts, lastVoted: new Date(), lastVotedType: type }
     const newDataWithCounts = [...dataWithCounts]
-      newDataWithCounts[index] = {
-        ...newDataWithCounts[index],
-        ...common
-      }
-      
+    newDataWithCounts[index] = {
+      ...newDataWithCounts[index],
+      ...common,
+    }
+
     setDataWithCounts(newDataWithCounts)
 
-    // update local storage to note if user has already voted for an id
+    // update local storage to note if user has already voted for an idUgh.
     cella.store({
       key: "votes",
       value: {
@@ -167,7 +207,7 @@ const Verification = ({ category, children, selectedState, dataSource }) => {
         downvote: downvoteCount,
       },
       type: "upvote",
-      index
+      index,
     })
   }
 
@@ -194,7 +234,7 @@ const Verification = ({ category, children, selectedState, dataSource }) => {
         downvote: r.downvote ? r.downvote + 1 : 1,
       },
       type: "downvote",
-      index
+      index,
     })
   }
 

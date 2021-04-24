@@ -65,6 +65,7 @@ const CategoryComponent = ({ category, stateContext }) => {
         const { downvoteFn, upvoteFn, dataWithCounts = [] } = verificationProps
 
         let updatedColumns = columns
+        
         if (!isExternalResources) {
           updatedColumns = [
             ...columns,
