@@ -1,7 +1,10 @@
 // hooks
+<<<<<<< HEAD
 import { Fragment, useContext, useEffect, useState } from "react"
+=======
+import { useContext } from "react"
+>>>>>>> origin/develop
 import { useHistory, useParams } from "react-router-dom"
-import { useList } from "react-firebase-hooks/database"
 // antd
 import { Result, Button } from "antd"
 // constants
@@ -10,11 +13,11 @@ import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
 // context
 import { StateContext } from "context/StateContext"
 // helper
-import { toKebabCase, toTitleCase } from "utils/caseHelper"
-import { verificationColumn } from "components/Verification"
+import { toTitleCase } from "utils/caseHelper"
+import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
 // components
 import Loader from "components/Loader"
-import Verification from "components/Verification"
+import { Verification, verificationColumn } from "components/Verification"
 // styles
 import Table from "components/Table"
 // columns
@@ -40,11 +43,16 @@ const CategoryComponent = ({ category, stateContext }) => {
       .equalTo(selectedState)
   }
 
-  const [snapshots, loading, error] = useList(dbRef)
-  const [dataSource, setDataSource] = useState([])
-  useEffect(() => {
-    setDataSource(snapshots.map((i) => i.val()))
-  }, [snapshots])
+  const prevCategory = usePrevious(category)
+  const prevSelectedState = usePrevious(selectedState)
+  const shouldRefetchData =
+    (prevCategory !== undefined && prevCategory !== category) ||
+    (prevSelectedState !== undefined && prevSelectedState !== selectedState)
+
+  const { data: dataSource, loading } = useFirebaseOnce(
+    dbRef,
+    shouldRefetchData
+  )
 
   const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
@@ -55,25 +63,14 @@ const CategoryComponent = ({ category, stateContext }) => {
       : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
-    <Verification selectedState={selectedState} category={category}>
+    <Verification
+      category={category}
+      dataSource={dataSource}
+      selectedState={selectedState}
+      shouldRefetchData={shouldRefetchData}
+    >
       {(verificationProps) => {
-        const { downvoteFn, upvoteFn, verificationCounts } = verificationProps
-        // add verification counts in dataSource
-        const dataWithCounts = dataSource.map((i) => {
-          let field = verificationCounts?.[i.key]
-          // if no state is selected, the structure is {[State]: {[key] : {upvote, downvote}}}
-          if (!selectedState) {
-            field = verificationCounts?.[toKebabCase(i.State)]?.[i.key]
-          }
-          return {
-            ...i,
-            upvote: field?.upvote ?? 0,
-            downvote: field?.downvote ?? 0,
-            lastVoted: field?.lastVoted ?? null,
-            lastVotedType: field?.lastVotedType ?? null,
-          }
-        })
-
+        const { downvoteFn, upvoteFn, dataWithCounts } = verificationProps
         let updatedColumns = columns
 
         if (!isExternalResources) {
@@ -93,7 +90,6 @@ const CategoryComponent = ({ category, stateContext }) => {
               columns={updatedColumns}
               dataSource={dataWithCounts}
               loading={loading}
-              error={error}
               resetSearch={isExternalResources}
             />
           </Fragment>
