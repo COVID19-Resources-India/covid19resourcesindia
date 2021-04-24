@@ -22,20 +22,24 @@ const buildColumns = (c) =>
             return numbers.map((number, index) => {
               const trimmedNumber = number.trim()
               let valueToBeReturned = isValidNumber(trimmedNumber) ? (
-                <a href={`tel:${trimmedNumber}`}>{trimmedNumber}</a>
+                <a key={index} href={`tel:${trimmedNumber}`}>
+                  {trimmedNumber}
+                </a>
               ) : (
-                trimmedNumber
+                <span key={index}>{trimmedNumber}</span>
               )
               if (index !== 0 && valueToBeReturned)
-                valueToBeReturned = " / " + valueToBeReturned
-              return valueToBeReturned
+                valueToBeReturned = <span> / {valueToBeReturned}</span>
+              return <span key={index}>{valueToBeReturned}</span>
             })
           }
           return numbers
         }
         case "E-Mail Address":
           return trimmedItem ? (
-            <a href={`mailto:${trimmedItem}`}>{trimmedItem}</a>
+            <a key={trimmedItem} href={`mailto:${trimmedItem}`}>
+              {trimmedItem}
+            </a>
           ) : (
             trimmedItem
           )

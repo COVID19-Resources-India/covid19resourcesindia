@@ -28,7 +28,7 @@ const LinkComponent = ({ isInternal = false, text, link }) => {
     )
   }
   return (
-    <a key={text} href={link} target="_blank" rel="noreferrer" className="item">
+    <a href={link} target="_blank" rel="noreferrer" className="item">
       {text}
     </a>
   )
