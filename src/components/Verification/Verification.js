@@ -23,6 +23,7 @@ const Verification = ({
   const localStorageCounts = localStorage.getItem("votes")
     ? cella.get({ key: "votes" })
     : {}
+
   // fetch all by default
   let dbRef = db.ref(`${VERIFICATION_COUNT_NODE}/${category}`)
   // if state is selected in the context (from the header)
@@ -39,10 +40,80 @@ const Verification = ({
     shouldRefetchData
   )
 
+  // merge and create dataWithCounts if verificationCounts or dataSource changes
+  // required to be seperate from refetchVerification
+  // --> dataSource should not never be out of sync with dataWithCounts
+  useEffect(() => {
+    if (dataSource) {
+      const sortOrder = ["upvote", null, "downvote"]
+      // add verification counts in dataSource
+      let withCounts = dataSource
+        ?.map((i) => {
+          let field = fetchedVerificationCounts?.[i.key]
+          return {
+            ...i,
+            upvote: field?.upvote ?? 0,
+            downvote: field?.downvote ?? 0,
+            lastVoted: field?.lastVoted ?? null,
+            lastVotedType: field?.lastVotedType ?? null,
+          }
+        })
+        .sort((a, b) => {
+          // upvoted show on top of the list, then non-voted
+          // downvoted show at the end of the list
+          if (a.lastVotedType === b.lastVotedType) {
+            return b.lastVoted - a.lastVoted
+          } else {
+            return (
+              sortOrder.indexOf(a.lastVotedType) -
+              sortOrder.indexOf(b.lastVotedType)
+            )
+          }
+        })
+      setDataWithCounts(withCounts)
+    } else {
+      setDataWithCounts([])
+    }
+  }, [dataSource, fetchedVerificationCounts])
+
   // Update db and update dataWithCounts
   // dataWithCounts automatically updates and sorts based on vote count
   // if the data source / verification counts are updated
-  const vote = ({ r, ref, counts, type }) => {
+  const vote = ({ r, isChangingVote = false, type }) => {
+    const state = toKebabCase(r.State)
+    const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
+
+    let counts = {
+      upvote: r.upvote ? r.upvote : 0,
+      downvote: r.downvote ? r.downvote : 0,
+    }
+    let refToDecrement = null
+    if (type === "upvote") {
+      counts.upvote = counts.upvote + 1
+      // reduce downvote count if person is changing their vote
+      if (isChangingVote) {
+        counts.downvote = counts.downvote === 0 ? 0 : counts.downvote - 1
+        refToDecrement = "downvote"
+      }
+    } else if (type === "downvote") {
+      counts.downvote = counts.downvote + 1
+      // reduce upvote count if person is changing their vote
+      if (isChangingVote) {
+        counts.upvote = counts.upvote === 0 ? 0 : counts.upvote - 1
+        refToDecrement = "upvote"
+      }
+    }
+
+    // decrement if changing votes
+    if (refToDecrement) {
+      db.ref(ref)
+        .child(refToDecrement)
+        .set(firebase.database.ServerValue.increment(-1))
+    }
+
+    // increment type (upvote/downvote) value
+    db.ref(ref).child(type).set(firebase.database.ServerValue.increment(1))
+
     // update timestamp
     db.ref(ref).child("lastVoted").set(firebase.database.ServerValue.TIMESTAMP)
     db.ref(ref).child("lastVotedType").set(type)
@@ -76,97 +147,15 @@ const Verification = ({
     })
   }
 
-  // merge and create dataWithCounts if verificationCounts or dataSource changes
-  // required to be seperate from refetchVerification
-  // --> dataSource should not never be out of sync with dataWithCounts
-  useEffect(() => {
-    if (dataSource) {
-      const sortOrder = ["upvote", null, "downvote"]
-      // add verification counts in dataSource
-      let withCounts = dataSource
-        ?.map((i) => {
-          let field = fetchedVerificationCounts?.[i.key]
-          return {
-            ...i,
-            upvote: field?.upvote ?? 0,
-            downvote: field?.downvote ?? 0,
-            lastVoted: field?.lastVoted ?? null,
-            lastVotedType: field?.lastVotedType ?? null,
-          }
-        })
-        .sort((a, b) => {
-          // upvoted show on top of the list, then non-voted
-          // downvoted show at the end of the list
-          if (a.lastVotedType === b.lastVotedType) {
-            // If the elements both have the same `type`,
-            return b.lastVoted - a.lastVoted // Compare by last voted time
-          } else {
-            // Otherwise,
-            return (
-              sortOrder.indexOf(a.lastVotedType) -
-              sortOrder.indexOf(b.lastVotedType)
-            ) // Substract indexes, If element `a` comes first in the array,
-            // the returned value will be negative, resulting in it being sorted before `b`, and vice versa.
-          }
-        })
-      setDataWithCounts(withCounts)
-    } else {
-      setDataWithCounts([])
-    }
-  }, [dataSource, fetchedVerificationCounts])
-
-  const upvoteFn = ({ r, isChangingVote = false }) => {
-    const state = toKebabCase(r.State)
-    const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
-
-    let downvoteCount = r.downvote ?? 0
-    // reduce downvote count if person is changing their vote
-    if (isChangingVote) {
-      downvoteCount = downvoteCount === 0 ? 0 : downvoteCount - 1
-      db.ref(ref)
-        .child("downvote")
-        .set(firebase.database.ServerValue.increment(-1))
-    }
-    db.ref(ref).child("upvote").set(firebase.database.ServerValue.increment(1))
-
-    vote({
-      r,
-      ref,
-      counts: {
-        upvote: r.upvote ? r.upvote + 1 : 1,
-        downvote: downvoteCount,
-      },
-      type: "upvote",
-    })
-  }
-
-  const downvoteFn = ({ r, isChangingVote = false }) => {
-    const state = toKebabCase(r.State)
-    const ref = `${VERIFICATION_COUNT_NODE}/${category}/${state}/${r.key}`
-    let upvoteCount = r.upvote ?? 0
-    // reduce upvote count if person is changing their vote
-    if (isChangingVote) {
-      upvoteCount = upvoteCount === 0 ? 0 : upvoteCount - 1
-      db.ref(ref)
-        .child("upvote")
-        .set(firebase.database.ServerValue.increment(-1))
-    }
-    db.ref(ref)
-      .child("downvote")
-      .set(firebase.database.ServerValue.increment(1))
-
-    vote({
-      r,
-      ref,
-      counts: {
-        upvote: upvoteCount,
-        downvote: r.downvote ? r.downvote + 1 : 1,
-      },
-      type: "downvote",
-    })
-  }
-
-  return <>{children({ downvoteFn, upvoteFn, dataWithCounts })}</>
+  return (
+    <>
+      {children({
+        downvoteFn: (p) => vote({ ...p, type: "downvote" }),
+        upvoteFn: (p) => vote({ ...p, type: "upvote" }),
+        dataWithCounts,
+      })}
+    </>
+  )
 }
 
 export default Verification
