@@ -41,6 +41,8 @@ const StateSelector = () => {
   return (
     <Select
       showSearch
+      autoFocus
+      defaultOpen={!selectedState}
       style={{ width: 200 }}
       placeholder="Select a state..."
       optionFilterProp="children"
