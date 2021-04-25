@@ -86,7 +86,6 @@ const CategoryComponent = ({ category, stateContext }) => {
               columns={updatedColumns}
               dataSource={dataWithCounts}
               loading={loading}
-              resetSearch={isExternalResources}
             />
           </Fragment>
         )
