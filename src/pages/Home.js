@@ -17,6 +17,7 @@ import "./Home.scss"
 
 export default function Home() {
   const { selectedState } = useContext(StateContext)
+  const state = toKebabCase(selectedState)
   return (
     <section className="home">
       <div className="wrapper">
@@ -42,9 +43,7 @@ export default function Home() {
                 className="tag-item"
                 key={i}
                 activeClassName="is-active"
-                to={`/search/${
-                  selectedState ? toKebabCase(selectedState) : "all"
-                }/${toKebabCase(i)}`}
+                to={`/search/${state ?? "all"}/${toKebabCase(i)}`}
               >
                 <Tag>{i}</Tag>
               </NavLink>
