@@ -1,6 +1,6 @@
 import { useState } from "react"
 // antd
-import { Button, Input } from "antd"
+import { Button, Input, Select } from "antd"
 import Modal from "antd/lib/modal/Modal"
 // constant
 import {
@@ -9,20 +9,48 @@ import {
   TWITTER_SUBTRACT_SEARCH,
   TWITTER_VERIFIED_SEARCH,
 } from "constant/static"
-// helper
-import { toTitleCase } from "utils/caseHelper"
 // icons
 import { ReactComponent as TwitterIcon } from "assets/icons/twitter.svg"
 // styles
 import "./TwitterSearch.scss"
 
-const mapCategoryToTwitterCategory = (category) =>
-  TWITTER_SEARCH_KEYS[category] || TWITTER_DEFAULT_SEARCH_KEY
+const { Option } = Select
+
+// const mapCategoryToTwitterCategory = (category) =>
+//   TWITTER_SEARCH_KEYS.find((element) => element.key === category)
+
+const categoryOptions = []
+for (let i = 0; i < TWITTER_SEARCH_KEYS.length; i++) {
+  categoryOptions.push(
+    <Option
+      key={TWITTER_SEARCH_KEYS[i].key}
+      value={TWITTER_SEARCH_KEYS[i].value}
+    >
+      {TWITTER_SEARCH_KEYS[i].label}
+    </Option>
+  )
+}
 
 const TwitterSearch = ({ category }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedCity, setSelectedCity] = useState("")
-  const mappedCategory = mapCategoryToTwitterCategory(category)
+  
+  // TODO: Figure out a way to remember the existing categories and url category
+  // Cases
+  // 1. If user lands on a category page and seaches
+  // 2. If user lands on a category page and moves on different category and searches
+  // 3. If user lands on a non category page and searches
+  // 4. If user langs on a category page, adds another category, goes on a different category and searches
+  // 5. If a user lands on a non category page, adds a category and goes to a category page and searches
+  // So as of now not selecting any category by default.
+  
+  // const mappedCategory = mapCategoryToTwitterCategory(category)
+  const [categoryValue, setCategoryValue] = useState(
+    []
+    // mappedCategory && mappedCategory.value
+    //   ? [mappedCategory.value]
+    //   : TWITTER_DEFAULT_SEARCH_KEY
+  )
 
   const showModal = () => {
     setIsModalVisible(true)
@@ -35,7 +63,11 @@ const TwitterSearch = ({ category }) => {
       searchString += ` ${selectedCity}`
     }
 
-    searchString += ` ${mappedCategory}`
+    searchString += ` ${
+      categoryValue && categoryValue.length
+        ? categoryValue.join(" OR ")
+        : TWITTER_DEFAULT_SEARCH_KEY
+    }`
     searchString += TWITTER_SUBTRACT_SEARCH
 
     const twitterSearchUrl =
@@ -48,6 +80,10 @@ const TwitterSearch = ({ category }) => {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+  }
+
+  const handleChange = (value) => {
+    setCategoryValue(value)
   }
 
   const onInputChange = (event) => setSelectedCity(event.target.value)
@@ -92,11 +128,14 @@ const TwitterSearch = ({ category }) => {
         </div>
         <div className="info-container">
           <label className="info-label">Category</label>
-          <Input
-            className="info-input"
-            value={toTitleCase(category)}
-            disabled
-          />
+          <Select
+            mode="tags"
+            style={{ width: "100%" }}
+            onChange={handleChange}
+            value={categoryValue}
+          >
+            {categoryOptions}
+          </Select>
         </div>
       </Modal>
     </>
