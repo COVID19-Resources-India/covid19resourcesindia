@@ -43,7 +43,7 @@ const SocialIconsMenu = () => {
     <>
       <a
         href="https://t.me/covid19resourcesindia"
-        className="item"
+        className="item social"
         target="_blank"
         rel="noreferrer"
       >
@@ -51,7 +51,7 @@ const SocialIconsMenu = () => {
       </a>
       <a
         href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
-        className="item"
+        className="item social"
         target="_blank"
         rel="noreferrer"
       >
