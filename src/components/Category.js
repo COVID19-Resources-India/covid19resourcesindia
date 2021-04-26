@@ -1,5 +1,3 @@
-// hooks
-import { Fragment } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
@@ -19,7 +17,6 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
-import TwitterSearch from "./TwitterSearch"
 
 const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
@@ -75,14 +72,11 @@ const CategoryComponent = ({ category, selectedState }) => {
         }
 
         return (
-          <Fragment>
-            <TwitterSearch category={category} />
             <Table
               columns={updatedColumns}
               dataSource={dataWithCounts}
               loading={loading}
             />
-          </Fragment>
         )
       }}
     </Verification>
