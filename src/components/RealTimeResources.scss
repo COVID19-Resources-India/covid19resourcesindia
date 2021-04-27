@@ -39,6 +39,12 @@
         display: flex;
         column-gap: 12px;
 
+        .status {
+          display: block;
+          color: $color-muted;
+          font-size: 0.85em;
+          margin-top: 5px;
+        }
         .mobile-status {
           display: none;
         }
@@ -114,9 +120,6 @@
       .resource {
         .call-to-action {
           .mobile-status {
-            color: $color-muted;
-            font-size: 0.85em;
-            margin-top: 5px;
             display: block;
           }
         }

@@ -57,6 +57,29 @@ export default function RealTimeResources() {
               className="real-time-resources-tooltip"
               placement="bottomLeft"
               title={
+                telegramStatus === "Offline"
+                  ? "We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
+                  : ""
+              }
+            >
+              <Button
+                className="real-time-resources-button"
+                icon={<TelegramIcon />}
+              >
+                Telegram
+              </Button>
+              {telegramStatus === "Offline" ? (
+                <span className="status mobile-status">
+                  Currently Unavailable
+                </span>
+              ) : (
+                <span className="status">⚡Faster Response</span>
+              )}
+            </Tooltip>
+            <Tooltip
+              className="real-time-resources-tooltip"
+              placement="bottomLeft"
+              title={
                 whatsappStatus === "Offline"
                   ? "We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
                   : ""
@@ -69,26 +92,9 @@ export default function RealTimeResources() {
                 WhatsApp
               </Button>
               {whatsappStatus === "Offline" && (
-                <span className="mobile-status">Currently Unavailable</span>
-              )}
-            </Tooltip>
-            <Tooltip
-              className="real-time-resources-tooltip"
-              placement="bottomLeft"
-              title={
-                telegramStatus === "Offline"
-                  ? "We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
-                  : ""
-              }
-            >
-              <Button
-                className="real-time-resources-button"
-                icon={<TelegramIcon />}
-              >
-                Telegram
-              </Button>
-              {telegramStatus === "Offline" && (
-                <span className="mobile-status">Currently Unavailable</span>
+                <span className="status mobile-status">
+                  Currently Unavailable
+                </span>
               )}
             </Tooltip>
           </div>
