@@ -18,15 +18,19 @@ export default function RealTimeResources() {
   const [snapshots] = useList(db.ref(`${SPREADSHEET_KEY}/current-status`))
   const data = snapshots.map((i) => i.val())
 
-  let telegramStatus = "Online",
-    whatsappStatus = "Online"
+  let telegramStatus = "Offline",
+    whatsappStatus = "Offline",
+    telegramEnabled = false,
+    whatsappEnabled = false
 
   // TODO: Fetch server time and automatically mark offline at night
   for (const details of data) {
     if (details.Platform === "Telegram") {
       telegramStatus = details.Status
+      telegramEnabled = details.Enabled
     } else if (details.Platform === "WhatsApp") {
       whatsappStatus = details.Status
+      whatsappEnabled = details.Enabled
     }
   }
 
@@ -69,6 +73,7 @@ export default function RealTimeResources() {
                 onClick={() => window.open(TELEGRAM_URL, "_blank").focus()}
                 className="real-time-resources-button"
                 icon={<TelegramIcon />}
+                disabled={!telegramEnabled}
               >
                 Telegram
               </Button>
@@ -93,6 +98,7 @@ export default function RealTimeResources() {
                 onClick={() => window.open(WHATSAPP_URL, "_blank").focus()}
                 className="real-time-resources-button"
                 icon={<WhatsAppIcon />}
+                disabled={!whatsappEnabled}
               >
                 WhatsApp
               </Button>
