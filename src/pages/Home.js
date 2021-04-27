@@ -6,6 +6,7 @@ import { Tag } from "antd"
 // components
 import Category from "components/Category"
 import EmergencyInfo from "components/EmergencyInfo"
+import RealTimeResources from "components/RealTimeResources"
 // constants
 import { CATEGORIES } from "constant/static"
 // helper
@@ -50,6 +51,8 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <div className="divider"></div>
+          <RealTimeResources />
         <div className="divider"></div>
         <Switch>
           <Route path="/search/:state/:category" component={Category} />

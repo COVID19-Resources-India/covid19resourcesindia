@@ -1,0 +1,138 @@
+@import "common/styles/_base.scss";
+
+.real-time-resources {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: $type-medium;
+  row-gap: 40px;
+
+  .alert-block {
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: #fff1f7;
+    color: #68002b;
+    font-size: 13px;
+    text-align: center;
+    width: max-content;
+  }
+
+  .resources-block {
+    display: flex;
+    max-width: 560px;
+    column-gap: 56px;
+
+    .resource {
+      .title {
+        font-size: 18px;
+        font-weight: $type-bold;
+        margin-bottom: 8px;
+      }
+
+      .description {
+        font-size: 13px;
+        line-height: 160%;
+        margin-bottom: 24px;
+      }
+
+      .call-to-action {
+        display: flex;
+        column-gap: 12px;
+
+        .status {
+          display: block;
+          color: $color-muted;
+          font-size: 0.85em;
+          margin-top: 5px;
+          text-align: center;
+        }
+        .mobile-status {
+          display: none;
+        }
+        .ant-btn {
+          background-color: $color-surface-alternate;
+          border-color: $color-surface-alternate;
+          color: $color-foreground;
+          font-weight: $type-bold;
+          padding: 8px 16px;
+          border-radius: 4px;
+          height: unset;
+          transition: all 0.2s ease;
+
+          svg {
+            vertical-align: middle;
+            margin-right: 8px;
+
+            path {
+              transition: all 0.2s ease;
+            }
+          }
+
+          span {
+            vertical-align: middle;
+          }
+
+          &:hover {
+            background-color: $color-primary;
+            color: $color-background;
+
+            svg {
+              fill: $color-background;
+
+              path {
+                fill: $color-background;
+              }
+            }
+          }
+
+          &:focus-visible {
+            outline: 1px solid $color-primary;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 960px) {
+    .alert-block {
+      width: 100%;
+
+      br {
+        display: none;
+      }
+    }
+
+    .resources-block {
+      flex-direction: column;
+      row-gap: 40px;
+
+      .resource {
+        text-align: center;
+
+        .call-to-action {
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px){
+    .resources-block {
+      .resource {
+        .call-to-action {
+          .mobile-status {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ant-tooltip {
+    .ant-tooltip-content {
+      display: none;
+    }
+  }
+}
