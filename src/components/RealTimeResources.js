@@ -11,6 +11,9 @@ import { db } from "constant/firebase"
 import "./RealTimeResources.scss"
 import TwitterSearch from "./TwitterSearch"
 
+const WHATSAPP_URL = "https://wa.me/message/QQESCAOCFEXMK1"
+const TELEGRAM_URL = "https://t.me/COVID19ResourcesIndia_Support"
+
 export default function RealTimeResources() {
   const [snapshots] = useList(db.ref(`${SPREADSHEET_KEY}/current-status`))
   const data = snapshots.map((i) => i.val())
@@ -63,6 +66,7 @@ export default function RealTimeResources() {
               }
             >
               <Button
+                onClick={() => window.open(TELEGRAM_URL, "_blank").focus()}
                 className="real-time-resources-button"
                 icon={<TelegramIcon />}
               >
@@ -73,7 +77,7 @@ export default function RealTimeResources() {
                   Currently Unavailable
                 </span>
               ) : (
-                <span className="status">⚡Faster Response</span>
+                <span className="status">⚡&nbsp; &nbsp;Faster Response</span>
               )}
             </Tooltip>
             <Tooltip
@@ -86,6 +90,7 @@ export default function RealTimeResources() {
               }
             >
               <Button
+                onClick={() => window.open(WHATSAPP_URL, "_blank").focus()}
                 className="real-time-resources-button"
                 icon={<WhatsAppIcon />}
               >
