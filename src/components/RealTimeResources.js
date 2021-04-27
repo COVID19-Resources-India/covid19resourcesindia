@@ -1,12 +1,32 @@
-import React from "react"
+import { useList } from "react-firebase-hooks/database"
+// antd
 import { Tooltip, Button } from "antd"
+// icons
 import { ReactComponent as WhatsAppIcon } from "assets/icons/whatsapp.svg"
 import { ReactComponent as TelegramIcon } from "assets/icons/telegram.svg"
+// static
+import { SPREADSHEET_KEY } from "constant/static"
+import { db } from "constant/firebase"
 
 import "./RealTimeResources.scss"
 import TwitterSearch from "./TwitterSearch"
 
 export default function RealTimeResources() {
+  const [snapshots] = useList(db.ref(`${SPREADSHEET_KEY}/current-status`))
+  const data = snapshots.map((i) => i.val())
+
+  let telegramStatus = "Online",
+    whatsappStatus = "Online"
+
+  // TODO: Fetch server time and automatically mark offline at night
+  for (const details of data) {
+    if (details.Platform === "Telegram") {
+      telegramStatus = details.Status
+    } else if (details.Platform === "WhatsApp") {
+      whatsappStatus = details.Status
+    }
+  }
+
   return (
     <section className="real-time-resources">
       <div className="alert-block">
@@ -36,7 +56,11 @@ export default function RealTimeResources() {
             <Tooltip
               className="real-time-resources-tooltip"
               placement="bottomLeft"
-              title="We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
+              title={
+                whatsappStatus === "Offline"
+                  ? "We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
+                  : ""
+              }
             >
               <Button
                 className="real-time-resources-button"
@@ -44,11 +68,18 @@ export default function RealTimeResources() {
               >
                 WhatsApp
               </Button>
+              {whatsappStatus === "Offline" && (
+                <span className="mobile-status">Currently Unavailable</span>
+              )}
             </Tooltip>
             <Tooltip
               className="real-time-resources-tooltip"
               placement="bottomLeft"
-              title="We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
+              title={
+                telegramStatus === "Offline"
+                  ? "We are currently unavailable. Please feel free to leave us a message and we'll get back to you as soon as we can."
+                  : ""
+              }
             >
               <Button
                 className="real-time-resources-button"
@@ -56,6 +87,9 @@ export default function RealTimeResources() {
               >
                 Telegram
               </Button>
+              {telegramStatus === "Offline" && (
+                <span className="mobile-status">Currently Unavailable</span>
+              )}
             </Tooltip>
           </div>
         </div>

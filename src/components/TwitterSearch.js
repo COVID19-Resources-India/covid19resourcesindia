@@ -1,5 +1,4 @@
 import { useState } from "react"
-// import { useParams } from "react-router"
 // antd
 import { Button, Input, Select } from "antd"
 import Modal from "antd/lib/modal/Modal"
@@ -33,7 +32,6 @@ for (let i = 0; i < TWITTER_SEARCH_KEYS.length; i++) {
 }
 
 const TwitterSearch = () => {
-  // const { category } = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedCity, setSelectedCity] = useState("")
 

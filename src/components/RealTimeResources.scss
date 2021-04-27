@@ -39,6 +39,9 @@
         display: flex;
         column-gap: 12px;
 
+        .mobile-status {
+          display: none;
+        }
         .ant-btn {
           background-color: $color-surface-alternate;
           border-color: $color-surface-alternate;
@@ -103,6 +106,29 @@
           justify-content: center;
         }
       }
+    }
+  }
+
+  @media screen and (max-width: 768px){
+    .resources-block {
+      .resource {
+        .call-to-action {
+          .mobile-status {
+            color: $color-muted;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ant-tooltip {
+    .ant-tooltip-content {
+      display: none;
     }
   }
 }
