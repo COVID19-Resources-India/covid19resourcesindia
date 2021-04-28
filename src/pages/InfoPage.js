@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
-import { useHistory, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useList } from "react-firebase-hooks/database"
 // components
 import Table from "components/Table"
-// antd
-import { Result, Button } from "antd"
+import NotFound from "components/NotFound"
 // constants
 import { db } from "constant/firebase"
 // styles
@@ -92,21 +91,11 @@ const InfoPageComponent = (props) => {
 
 // Returns 404 if page param is not in PAGE_LIST
 const InfoPage = () => {
-  const history = useHistory()
   const { page } = useParams()
   if (!PAGE_LIST[page]) {
     return (
       <section className="info-page">
-        <Result
-          status="404"
-          title="404"
-          subTitle={`Requested page ${page} not found`}
-          extra={
-            <Button onClick={() => history.push("/")} type="primary">
-              Back Home
-            </Button>
-          }
-        />
+        <NotFound subTitle={`Requested page ${page} not found`} />
       </section>
     )
   }
