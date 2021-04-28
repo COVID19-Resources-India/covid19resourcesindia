@@ -1,13 +1,15 @@
 const SPREADSHEET_KEY = "11cAlFOEgfIyE0jmV_8X8_DqImCfxHyk7zo8wETFX9x4"
-const CATEGORIES = [
-  "Beds",
+const CATEGORIES = ["Beds", "External Resources"]
+// "Oxygen Cylinders",
+// "Remdesivir",
+// "Tocilizumab",
+
+const TWITTER_ADDITIONAL_CATEGORIES = [
   "Oxygen Cylinders",
   "Remdesivir",
   "Tocilizumab",
-  "External Resources",
+  "Plasma",
 ]
-
-const TWITTER_ADDITIONAL_CATEGORIES = ["Plasma"]
 const TWITTER_DEFAULT_SEARCH_KEY = "(bed OR beds OR oxygen)"
 const TWITTER_SEARCH_KEYS = {
   beds: "(bed OR beds)",
