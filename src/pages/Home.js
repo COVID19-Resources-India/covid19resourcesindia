@@ -44,7 +44,7 @@ export default function Home() {
                 className="tag-item"
                 key={i}
                 activeClassName="is-active"
-                to={`/search/${state ?? "all"}/${toKebabCase(i)}`}
+                to={`/search/${state ? state : "all"}/${toKebabCase(i)}`}
               >
                 <Tag>{i}</Tag>
               </NavLink>
@@ -52,7 +52,7 @@ export default function Home() {
           </div>
         </section>
         <div className="divider"></div>
-          <RealTimeResources />
+        <RealTimeResources />
         <div className="divider"></div>
         <Switch>
           <Route path="/search/:state/:category" component={Category} />
