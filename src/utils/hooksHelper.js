@@ -32,9 +32,7 @@ function useFirebaseOnce(dbRef, shouldRefetchData) {
       // console.log("&& fetched", s.val())
       const vals = s.val()
       if (vals) {
-        setData(
-          Object.keys(vals).map((key) => ({ [key]: vals[key], ...vals[key] }))
-        )
+        setData(Object.keys(vals).map((key) => vals[key]))
         setDataObj(s.val())
       } else {
         setData([])

@@ -7,6 +7,7 @@ import { Tag } from "antd"
 import Category from "components/Category"
 import EmergencyInfo from "components/EmergencyInfo"
 import RealTimeResources from "components/RealTimeResources"
+import Sources from "pages/Sources"
 // constants
 import { CATEGORIES } from "constant/static"
 // helper
@@ -49,16 +50,22 @@ export default function Home() {
                 <Tag>{i}</Tag>
               </NavLink>
             ))}
+            <NavLink
+              className="tag-item"
+              activeClassName="is-active"
+              to={`/sources`}
+            >
+              <Tag>Sources</Tag>
+            </NavLink>
           </div>
         </section>
         <div className="divider"></div>
         <RealTimeResources />
         <div className="divider"></div>
         <Switch>
+          <Route path="/sources" component={Sources} />
           <Route path="/search/:state/:category" component={Category} />
-          <Route path="/">
-            <EmergencyInfo />
-          </Route>
+          <Route path="/" component={EmergencyInfo} />
         </Switch>
         <div className="divider"></div>
       </div>
