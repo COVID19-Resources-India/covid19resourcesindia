@@ -17,6 +17,7 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
+import TwitterSearch from "./TwitterSearch"
 
 const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
@@ -72,11 +73,11 @@ const CategoryComponent = ({ category, selectedState }) => {
         }
 
         return (
-            <Table
-              columns={updatedColumns}
-              dataSource={dataWithCounts}
-              loading={loading}
-            />
+          <Table
+            columns={updatedColumns}
+            dataSource={dataWithCounts}
+            loading={loading}
+          />
         )
       }}
     </Verification>
