@@ -71,10 +71,9 @@ Changes on `main` get deployed to [covid19resourcesindia.com](https://covid19res
 
 * **Mitesh Sawant** - [miteshsawant](https://github.com/miteshsawant)
 * **Radha Satam** - [radhasatam](https://github.com/radhasatam)
+* **Jigar Mehta** - [jigar1101](https://github.com/jigar1101)
 
 ## Contributors
-
-* **Jigar Mehta** - [jigar1101](https://github.com/jigar1101)
 
 See also the list of all [contributors](https://github.com/COVID19-Resources-India/covid19resourcesindia/graphs/contributors) who participated in this project.
 
