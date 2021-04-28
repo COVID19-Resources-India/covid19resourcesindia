@@ -17,6 +17,7 @@ const HEADER_SITE_TEXT = (
 const menuLinks = [
   { link: "https://forms.gle/rrbpk9SzGFmxbFpX9", text: "Submit Information" },
   { link: "https://bit.ly/32vqT5O", text: "Volunteer" },
+  { link: "https://forms.gle/cAMsUt6sXiN4Cuyu6", text: "Report" },
 ]
 
 const LinkComponent = ({ isInternal = false, text, link }) => {
@@ -43,7 +44,7 @@ const SocialIconsMenu = () => {
     <>
       <a
         href="https://t.me/covid19resourcesindia"
-        className="item"
+        className="item social"
         target="_blank"
         rel="noreferrer"
       >
@@ -51,7 +52,7 @@ const SocialIconsMenu = () => {
       </a>
       <a
         href="https://github.com/COVID19-Resources-India/covid19resourcesindia"
-        className="item"
+        className="item social"
         target="_blank"
         rel="noreferrer"
       >

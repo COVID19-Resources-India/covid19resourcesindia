@@ -1,4 +1,5 @@
 import { useCallback, useRef, useEffect, useState } from "react"
+import { useLocation } from "react-router-dom"
 
 function usePrevious(value) {
   const ref = useRef()
@@ -62,4 +63,11 @@ function useFirebaseOnce(dbRef, shouldRefetchData) {
   return { data, dataObj, loading }
 }
 
-export { usePrevious, useFirebaseOnce }
+// Ref: https://reactrouter.com/web/example/query-parameters
+// A custom hook that builds on useLocation to parse
+// the query string for you.
+function useQuery() {
+  return new URLSearchParams(useLocation().search)
+}
+
+export { usePrevious, useQuery, useFirebaseOnce }

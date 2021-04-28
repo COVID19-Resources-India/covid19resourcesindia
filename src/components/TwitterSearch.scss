@@ -16,14 +16,19 @@
   }
 }
 
+.twitter-disclaimer {
+  width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+}
+
 .info-container {
   display: flex;
   margin: 20px 0;
   .info-label {
     margin: 0 10px;
     min-width: 70px;
-  }
-  .info-input {
-    margin: 0 10px;
   }
 }

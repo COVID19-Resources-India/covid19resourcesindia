@@ -1,18 +1,13 @@
-// hooks
-import { Fragment, useContext } from "react"
 import { useHistory, useParams } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
 // constants
 import { db } from "constant/firebase"
 import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
-// context
-import { StateContext } from "context/StateContext"
 // helper
 import { toTitleCase } from "utils/caseHelper"
 import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
 // components
-import Loader from "components/Loader"
 import { Verification, verificationColumn } from "components/Verification"
 // styles
 import Table from "components/Table"
@@ -22,17 +17,14 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
-import TwitterSearch from "./TwitterSearch"
 
-const CategoryComponent = ({ category, stateContext }) => {
-  const { selectedState } = stateContext
-
+const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
   let dbRef = db.ref(`${SPREADSHEET_KEY}/${category}`)
   const isExternalResources = category === "external-resources"
   // if state is selected in the context (from the header)
   // filter based on state
-  if (selectedState && !isExternalResources) {
+  if (selectedState && selectedState !== "All" && !isExternalResources) {
     dbRef = db
       .ref(`${SPREADSHEET_KEY}/${category}`)
       .orderByChild("State")
@@ -80,15 +72,11 @@ const CategoryComponent = ({ category, stateContext }) => {
         }
 
         return (
-          <Fragment>
-            <TwitterSearch stateContext={stateContext} category={category} />
-            <Table
-              columns={updatedColumns}
-              dataSource={dataWithCounts}
-              loading={loading}
-              resetSearch={isExternalResources}
-            />
-          </Fragment>
+          <Table
+            columns={updatedColumns}
+            dataSource={dataWithCounts}
+            loading={loading}
+          />
         )
       }}
     </Verification>
@@ -98,12 +86,9 @@ const CategoryComponent = ({ category, stateContext }) => {
 // Fetches data for the category and displays in the antd table
 const Category = () => {
   const history = useHistory()
-  let { category } = useParams()
+  let { category, state } = useParams()
 
-  const stateContext = useContext(StateContext)
-  const { loadingState } = stateContext
-
-  if (!loadingState && !category) return null
+  if (!category) return null
   // Only fetch category from firebase if it is in the approved list of CATEGORIES
   if (!CATEGORIES.includes(toTitleCase(category))) {
     return (
@@ -119,12 +104,10 @@ const Category = () => {
       />
     )
   }
-  if (loadingState) {
-    // Loading when state being fetched from geolocation
-    return <Loader />
-  } else {
-    return <CategoryComponent category={category} stateContext={stateContext} />
-  }
+
+  return (
+    <CategoryComponent category={category} selectedState={toTitleCase(state)} />
+  )
 }
 
 export default Category
