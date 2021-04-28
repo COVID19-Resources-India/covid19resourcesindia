@@ -72,11 +72,11 @@ const CategoryComponent = ({ category, selectedState }) => {
         }
 
         return (
-            <Table
-              columns={updatedColumns}
-              dataSource={dataWithCounts}
-              loading={loading}
-            />
+          <Table
+            columns={updatedColumns}
+            dataSource={dataWithCounts}
+            loading={loading}
+          />
         )
       }}
     </Verification>
