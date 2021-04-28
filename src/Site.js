@@ -14,6 +14,7 @@ function Site() {
         <Switch>
           <Route path="/" component={Home} exact />
           <Route path="/search" component={Home} />
+          <Route path="/sources" component={Home} />
           <Route path="/info/:page" component={InfoPage} />
           {/* <Route path="/contribute" component={Contribute} /> */}
         </Switch>
