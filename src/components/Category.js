@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom"
 // constants
 import { db } from "constant/firebase"
 import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
+import { DISCLAIMERS } from "constant/disclaimers"
 // helper
 import { toTitleCase } from "utils/caseHelper"
 import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
@@ -16,6 +17,7 @@ import {
   DEFAULT_COLUMNS,
   buildColumns,
 } from "constant/columns"
+import "./Category.scss"
 
 const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
@@ -50,35 +52,40 @@ const CategoryComponent = ({ category, selectedState }) => {
       : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
-    <Verification
-      category={category}
-      dataSource={dataSource}
-      selectedState={selectedState}
-      shouldRefetchData={shouldRefetchData}
-    >
-      {(verificationProps) => {
-        const { downvoteFn, upvoteFn, dataWithCounts } = verificationProps
-        let updatedColumns = columns
+    <>
+      {DISCLAIMERS && DISCLAIMERS[category] !== undefined ? (
+        <div className="alert-block">{DISCLAIMERS[category]}</div>
+      ) : null}
+      <Verification
+        category={category}
+        dataSource={dataSource}
+        selectedState={selectedState}
+        shouldRefetchData={shouldRefetchData}
+      >
+        {(verificationProps) => {
+          const { downvoteFn, upvoteFn, dataWithCounts } = verificationProps
+          let updatedColumns = columns
 
-        if (!isExternalResources) {
-          updatedColumns = [
-            ...columns,
-            verificationColumn({
-              upvote: upvoteFn,
-              downvote: downvoteFn,
-            }),
-          ]
-        }
+          if (!isExternalResources) {
+            updatedColumns = [
+              ...columns,
+              verificationColumn({
+                upvote: upvoteFn,
+                downvote: downvoteFn,
+              }),
+            ]
+          }
 
-        return (
-          <Table
-            columns={updatedColumns}
-            dataSource={dataWithCounts}
-            loading={loading}
-          />
-        )
-      }}
-    </Verification>
+          return (
+            <Table
+              columns={updatedColumns}
+              dataSource={dataWithCounts}
+              loading={loading}
+            />
+          )
+        }}
+      </Verification>
+    </>
   )
 }
 
@@ -93,7 +100,12 @@ const Category = () => {
   }
 
   return (
-    <CategoryComponent category={category} selectedState={toTitleCase(state)} />
+    <section className="category">
+      <CategoryComponent
+        category={category}
+        selectedState={toTitleCase(state)}
+      />
+    </section>
   )
 }
 
