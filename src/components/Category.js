@@ -1,6 +1,4 @@
-import { useHistory, useParams } from "react-router-dom"
-// antd
-import { Result, Button } from "antd"
+import { useParams } from "react-router-dom"
 // constants
 import { db } from "constant/firebase"
 import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
@@ -9,6 +7,7 @@ import { toTitleCase } from "utils/caseHelper"
 import { usePrevious, useFirebaseOnce } from "utils/hooksHelper"
 // components
 import { Verification, verificationColumn } from "components/Verification"
+import NotFound from "components/NotFound"
 // styles
 import Table from "components/Table"
 // columns
@@ -85,24 +84,12 @@ const CategoryComponent = ({ category, selectedState }) => {
 
 // Fetches data for the category and displays in the antd table
 const Category = () => {
-  const history = useHistory()
   let { category, state } = useParams()
 
   if (!category) return null
   // Only fetch category from firebase if it is in the approved list of CATEGORIES
   if (!CATEGORIES.includes(toTitleCase(category))) {
-    return (
-      <Result
-        status="404"
-        title="404"
-        subTitle={`Requested category ${category} not found`}
-        extra={
-          <Button onClick={() => history.push("/")} type="primary">
-            Back Home
-          </Button>
-        }
-      />
-    )
+    return <NotFound subTitle={`Requested category ${category} not found`} />
   }
 
   return (
