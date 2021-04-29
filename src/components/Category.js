@@ -91,7 +91,7 @@ const CategoryComponent = ({ category, selectedState }) => {
 }
 
 // Fetches data for the category and displays in the antd table
-const Category = () => {
+const Category = ({ sectionRef }) => {
   const history = useHistory()
   let { category, state } = useParams()
 
@@ -113,7 +113,7 @@ const Category = () => {
   }
 
   return (
-    <section className="category">
+    <section ref={sectionRef} className="category">
       <CategoryComponent
         category={category}
         selectedState={toTitleCase(state)}
