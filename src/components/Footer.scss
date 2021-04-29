@@ -12,7 +12,10 @@
   }
 
   @media screen and (max-width: 960px) {
-    padding-top: 0px;
-    padding-bottom: 48px;
+    padding: 0 16px 48px;
+
+    br {
+      display: none;
+    }
   }
 }
