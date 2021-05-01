@@ -23,6 +23,7 @@ import {
   buildColumns,
 } from "constant/columns"
 import "./Category.scss"
+import { useEffect } from "react"
 
 const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
@@ -112,8 +113,12 @@ const CategoryComponent = ({ category, selectedState }) => {
 }
 
 // Fetches data for the category and displays in the antd table
-const Category = () => {
+const Category = ({ sectionRef, scrollToRef }) => {
   let { category, state } = useParams()
+
+  useEffect(() => {
+    scrollToRef()
+  })
 
   if (!category) return null
   // Only fetch category from firebase if it is in the approved list of CATEGORIES
@@ -122,7 +127,7 @@ const Category = () => {
   }
 
   return (
-    <section className="category">
+    <section ref={sectionRef} className="category">
       <CategoryComponent
         category={category}
         selectedState={toTitleCase(state)}

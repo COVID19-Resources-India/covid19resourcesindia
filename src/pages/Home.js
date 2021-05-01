@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useRef } from "react"
 import { Switch, Route, NavLink } from "react-router-dom"
 // antd
 // import { Input, Tag, Button } from "antd"
@@ -20,6 +20,19 @@ import "./Home.scss"
 export default function Home() {
   const { selectedState } = useContext(StateContext)
   const state = toKebabCase(selectedState)
+
+  const sectionRef = useRef(null)
+  const scrollToRef = () => {
+    setTimeout(() => {
+      if (sectionRef?.current) {
+        window.scrollTo({
+          top: sectionRef.current.offsetTop - 100,
+          behavior: "smooth",
+        })
+      }
+    }, 500)
+  }
+
   return (
     <section className="home">
       <div className="wrapper">
@@ -46,6 +59,7 @@ export default function Home() {
                 key={i}
                 activeClassName="is-active"
                 to={`/search/${state ? state : "all"}/${toKebabCase(i)}`}
+                onClick={scrollToRef}
               >
                 <Tag>{i}</Tag>
               </NavLink>
@@ -54,6 +68,7 @@ export default function Home() {
               className="tag-item"
               activeClassName="is-active"
               to={`/sources`}
+              onClick={scrollToRef}
             >
               <Tag>Sources</Tag>
             </NavLink>
@@ -64,7 +79,9 @@ export default function Home() {
         <div className="divider"></div>
         <Switch>
           <Route path="/sources" component={Sources} />
-          <Route path="/search/:state/:category" component={Category} />
+          <Route path="/search/:state/:category">
+            <Category sectionRef={sectionRef} scrollToRef={scrollToRef} />
+          </Route>
           <Route path="/" component={EmergencyInfo} />
         </Switch>
         <div className="divider"></div>
