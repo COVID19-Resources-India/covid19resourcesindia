@@ -56,6 +56,7 @@ const COLUMNS_PER_CATEGORY = {
   remdesivir: [...DEFAULT_COLUMNS, "E-Mail Address"],
   tocilizumab: [...DEFAULT_COLUMNS, "E-Mail Address"],
   "external-resources": ["State", "Region", "Name", "Link", "Notes"],
+  plasma: ["State", "City", "Title", "Link", "Telephone", "Notes"],
 }
 
 export { COLUMNS_PER_CATEGORY, DEFAULT_COLUMNS, buildColumns }

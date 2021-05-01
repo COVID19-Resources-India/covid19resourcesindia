@@ -1,7 +1,12 @@
 import { useParams } from "react-router-dom"
 // constants
 import { db } from "constant/firebase"
-import { CATEGORIES, SPREADSHEET_KEY } from "constant/static"
+import {
+  CATEGORIES,
+  CATEGORIES_WITHOUT_VERIFICATION_COLUMN,
+  CATEGORIES_WITH_NATIONAL,
+  SPREADSHEET_KEY,
+} from "constant/static"
 import { DISCLAIMERS } from "constant/disclaimers"
 // helper
 import { toTitleCase } from "utils/caseHelper"
@@ -22,14 +27,24 @@ import "./Category.scss"
 const CategoryComponent = ({ category, selectedState }) => {
   // fetch all by default
   let dbRef = db.ref(`${SPREADSHEET_KEY}/${category}`)
-  const isExternalResources = category === "external-resources"
+  let nationalRef = null
+  const showVerificationColumn =
+    CATEGORIES_WITHOUT_VERIFICATION_COLUMN.indexOf(category) === -1
+  const callNational = CATEGORIES_WITH_NATIONAL.indexOf(category) > -1
   // if state is selected in the context (from the header)
   // filter based on state
-  if (selectedState && selectedState !== "All" && !isExternalResources) {
+  if (selectedState && selectedState !== "All") {
     dbRef = db
       .ref(`${SPREADSHEET_KEY}/${category}`)
       .orderByChild("State")
       .equalTo(selectedState)
+
+    if (callNational) {
+      nationalRef = db
+        .ref(`${SPREADSHEET_KEY}/${category}`)
+        .orderByChild("State")
+        .equalTo("National")
+    }
   }
 
   const prevCategory = usePrevious(category)
@@ -38,18 +53,25 @@ const CategoryComponent = ({ category, selectedState }) => {
     (prevCategory !== undefined && prevCategory !== category) ||
     (prevSelectedState !== undefined && prevSelectedState !== selectedState)
 
-  const { data: dataSource, loading } = useFirebaseOnce(
+  const { data: dataSource = [], loading = false } = useFirebaseOnce(
     dbRef,
     shouldRefetchData
   )
 
+  const {
+    data: nationalData = [],
+    loading: nationalDataLoading = false,
+  } = useFirebaseOnce(nationalRef, shouldRefetchData)
+
   const preDefinedColumns = COLUMNS_PER_CATEGORY?.[category] ?? DEFAULT_COLUMNS
   // Update columns
-  // -> Show state column if no state is selected
-  const columns =
-    !selectedState || isExternalResources
-      ? buildColumns(preDefinedColumns)
-      : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
+  // -> Show state column
+  //  if no state is selected
+  //  if all states is selected
+  // if the page calls national api - which means we need to show the state data.
+  const columns = (!selectedState || selectedState === "All" || callNational)
+    ? buildColumns(preDefinedColumns)
+    : buildColumns(preDefinedColumns).filter((x) => x.key !== "State")
 
   return (
     <>
@@ -58,7 +80,7 @@ const CategoryComponent = ({ category, selectedState }) => {
       ) : null}
       <Verification
         category={category}
-        dataSource={dataSource}
+        dataSource={[...dataSource, ...nationalData]}
         selectedState={selectedState}
         shouldRefetchData={shouldRefetchData}
       >
@@ -66,7 +88,7 @@ const CategoryComponent = ({ category, selectedState }) => {
           const { downvoteFn, upvoteFn, dataWithCounts } = verificationProps
           let updatedColumns = columns
 
-          if (!isExternalResources) {
+          if (showVerificationColumn) {
             updatedColumns = [
               ...columns,
               verificationColumn({
@@ -80,7 +102,7 @@ const CategoryComponent = ({ category, selectedState }) => {
             <Table
               columns={updatedColumns}
               dataSource={dataWithCounts}
-              loading={loading}
+              loading={loading || nationalDataLoading}
             />
           )
         }}
