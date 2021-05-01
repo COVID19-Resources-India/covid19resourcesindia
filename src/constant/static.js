@@ -4,10 +4,14 @@ const CATEGORIES = [
   "Oxygen Cylinders",
   "Remdesivir",
   "Tocilizumab",
+  "Plasma",
   "External Resources",
 ]
 
-const TWITTER_ADDITIONAL_CATEGORIES = ["Plasma"]
+const CATEGORIES_WITHOUT_VERIFICATION_COLUMN = ["external-resources", "plasma"]
+const CATEGORIES_WITH_NATIONAL = ["external-resources", "plasma"]
+
+const TWITTER_ADDITIONAL_CATEGORIES = []
 const TWITTER_DEFAULT_SEARCH_KEY = "(bed OR beds OR oxygen)"
 const TWITTER_SEARCH_KEYS = {
   beds: "(bed OR beds)",
@@ -29,4 +33,6 @@ export {
   TWITTER_SEARCH_KEYS,
   TWITTER_SUBTRACT_SEARCH,
   TWITTER_VERIFIED_SEARCH,
+  CATEGORIES_WITHOUT_VERIFICATION_COLUMN,
+  CATEGORIES_WITH_NATIONAL
 }
