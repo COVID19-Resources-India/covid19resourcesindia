@@ -27,21 +27,24 @@ function useFirebaseOnce(dbRef, shouldRefetchData) {
   const [loading, setLoading] = useState(false)
 
   const fetchData = useCallback(() => {
-    setLoading(true)
-    dbRef.once("value").then((s) => {
-      // console.log("&& fetched", s.val())
-      const vals = s.val()
-      if (vals) {
-        setData(
-          Object.keys(vals).map((key) => ({ [key]: vals[key], ...vals[key] }))
-        )
-        setDataObj(s.val())
-      } else {
-        setData([])
-        setDataObj({})
-      }
-      setLoading(false)
-    })
+    if (dbRef) {
+      setLoading(true)
+      dbRef.once("value").then((s) => {
+        // console.log("&& fetched", s.val())
+        const vals = s.val()
+        if (vals) {
+          setData(Object.keys(vals).map((key) => vals[key]))
+          setDataObj(s.val())
+        } else {
+          setData([])
+          setDataObj({})
+        }
+        setLoading(false)
+      })
+    } else {
+      setData([])
+      setDataObj({})
+    }
   }, [dbRef])
 
   // init fetch

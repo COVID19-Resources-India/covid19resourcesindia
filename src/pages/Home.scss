@@ -63,7 +63,7 @@
 
     .divider {
       border: 1px solid $color-stroke;
-      margin: 56px 0;
+      margin: 40px 0;
       opacity: 0.4;
     }
 
@@ -138,14 +138,32 @@
   }
 
   @media screen and (max-width: 960px) {
-    padding: 120px 16px 48px;
+    padding: 80px 16px 48px;
 
     .wrapper {
+      .omnibox-wrapper {
+        .label {
+          font-size: 20px;
+        }
+
+        .tags {
+          .tag-item {
+            .ant-tag {
+              padding: 4px 12px;
+              font-size: 12px;
+              margin-bottom: 8px;
+            }
+          }
+        }
+      }
+
       .divider {
-        margin: 48px 0;
+        margin: 16px 0;
       }
 
       .page-content {
+        padding-top: 16px;
+
         .resources-wrapper {
           grid-template-columns: auto;
           grid-template-rows: unset;

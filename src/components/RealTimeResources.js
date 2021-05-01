@@ -36,12 +36,12 @@ export default function RealTimeResources() {
 
   return (
     <section className="real-time-resources">
-      <div className="alert-block">
+      {/* <div className="alert-block">
         It is possible that some of the sources on this website may have run out
         of stock due to increased demands. <br />
         You can try one of these options for real-time updates and assistance
         with your COVID-19 needs —
-      </div>
+      </div> */}
       <div className="resources-block">
         <div className="twitter-filters resource">
           <div className="title">Search on Twitter</div>

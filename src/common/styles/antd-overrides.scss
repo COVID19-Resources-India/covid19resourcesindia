@@ -35,6 +35,10 @@
 
       .ant-table-tbody {
         .ant-table-cell {
+          a {
+            max-width: 420px;
+            display: block;
+          }
           &.ant-table-cell-fix-right {
             border-left: 1px solid $color-stroke;
           }
