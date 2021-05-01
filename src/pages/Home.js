@@ -80,7 +80,7 @@ export default function Home() {
         <Switch>
           <Route path="/sources" component={Sources} />
           <Route path="/search/:state/:category">
-            <Category sectionRef={sectionRef} />
+            <Category sectionRef={sectionRef} scrollToRef={scrollToRef} />
           </Route>
           <Route path="/" component={EmergencyInfo} />
         </Switch>
