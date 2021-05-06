@@ -52,7 +52,7 @@ const buildColumns = (c) =>
 const DEFAULT_COLUMNS = ["State", "Distributor Name", "Telephone", "Address"]
 // not able to maintain the order of the spreadsheet - so need these here
 const COLUMNS_PER_CATEGORY = {
-  ambulance: ["State", "City", "Telephone", "Name", "Notes", "Source"],
+  ambulance: ["State", "City", "Telephone", "Name", "Notes"],
   beds: ["State", "City", "Link", "Notes"],
   remdesivir: [...DEFAULT_COLUMNS, "E-Mail Address"],
   tocilizumab: [...DEFAULT_COLUMNS, "E-Mail Address"],
