@@ -12,7 +12,7 @@ import "constant/firebase.js"
 // context
 import StateContextWrapper from "context/StateContext"
 //ant-d
-import "antd/dist/antd.css"
+//import "antd/dist/antd.css"
 import "common/styles/antd-overrides.scss"
 // time-ago
 import TimeAgo from "javascript-time-ago"
