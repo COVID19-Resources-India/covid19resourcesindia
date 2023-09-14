@@ -1,5 +1,5 @@
 import { useContext, useRef } from "react"
-import { Switch, Route, NavLink } from "react-router-dom"
+import { Router, Route, NavLink } from "react-router-dom"
 // antd
 // import { Input, Tag, Button } from "antd"
 import { Tag } from "antd"
@@ -77,13 +77,13 @@ export default function Home() {
         <div className="divider"></div>
         <RealTimeResources />
         <div className="divider"></div>
-        <Switch>
+        <Router>
           <Route path="/sources" component={Sources} />
           <Route path="/search/:state/:category">
             <Category sectionRef={sectionRef} scrollToRef={scrollToRef} />
           </Route>
           <Route path="/" component={EmergencyInfo} />
-        </Switch>
+        </Router>
         <div className="divider"></div>
       </div>
     </section>

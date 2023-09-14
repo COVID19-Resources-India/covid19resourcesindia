@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react"
-import { useLocation, useHistory } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 // antd
 import { Select } from "antd"
 // constant
@@ -16,7 +16,7 @@ const StateSelector = () => {
   const { selectedState, setSelectedState } = useContext(StateContext)
 
   const location = useLocation()
-  const history = useHistory()
+  const history = useNavigate()
   const splitLocation = location.pathname.split("/")
 
   function onChange(value) {

@@ -1,10 +1,10 @@
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 // antd
 import { Result, Button } from "antd"
 import "./NotFound.scss"
 
 const NotFound = ({ subTitle }) => {
-  const history = useHistory()
+  const history = useNavigate()
 
   return (
     <div className="not-found">
