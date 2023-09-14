@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 // antd
 import { Input } from "antd"
 // icons
@@ -7,7 +7,7 @@ import { ReactComponent as SearchIcon } from "assets/icons/search.svg"
 
 const SearchInput = ({ searchTermFromQuery }) => {
   const [query, setQuery] = useState(searchTermFromQuery)
-  const history = useHistory()
+  const history = useNavigate()
 
   const onChange = (e) => setQuery(e.target.value)
 
